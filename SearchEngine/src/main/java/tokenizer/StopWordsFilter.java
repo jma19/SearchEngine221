@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 public class StopWordsFilter {
 
     private Set<String> stopWordsContainer = new HashSet<>();
-    private String STOP_WORDS_PATH = "";
+    private String STOP_WORDS_PATH = "stopword.txt";
 
     private void loadWords() {
         try {
@@ -26,11 +26,11 @@ public class StopWordsFilter {
             String[] swords = stopWords.split(",");
             for (String word : swords) {
                 if (!word.isEmpty()) {
-                    stopWordsContainer.add(word);
+                    stopWordsContainer.add(word.trim());
                 }
             }
         } catch (FileNotFoundException e) {
-            System.out.println(String.format("Loading stopping word file %s failed", STOP_WORDS_PATH));
+            throw new RuntimeException(String.format("Loading stopping word file %s failed", STOP_WORDS_PATH));
         }
     }
 
