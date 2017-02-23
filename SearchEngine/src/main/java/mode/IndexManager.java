@@ -12,7 +12,6 @@ public class IndexManager {
 
     @PostConstruct
     private void loadData(){
-
     }
 
     public void addIndex(String key, int docId, int pos){
@@ -20,5 +19,6 @@ public class IndexManager {
     }
 
     private void saveData(){
+
     }
 }

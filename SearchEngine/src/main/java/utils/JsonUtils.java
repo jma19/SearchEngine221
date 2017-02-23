@@ -1,6 +1,10 @@
 package utils;
 
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import java.lang.reflect.Type;
+import java.util.List;
 
 /**
  * Created by junm5 on 2/22/17.
@@ -8,13 +12,16 @@ import com.google.gson.Gson;
 public class JsonUtils {
     private final static Gson gson = new Gson();
 
-    public static String toJson(Object obj){
+    public static String toJson(Object obj) {
         return gson.toJson(obj);
     }
 
-    public static <T> T fromJson(String json, Class<T> clas){
+    public static <T> T fromJson(String json, Class<T> clas) {
         return gson.fromJson(json, clas);
     }
 
+    public static <T> T fromJson(String json, TypeToken<T> type) {
+        return gson.fromJson(json, type.getType());
+    }
 }
 
