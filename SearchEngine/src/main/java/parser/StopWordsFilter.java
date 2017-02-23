@@ -3,6 +3,7 @@ package parser;
 import io.MyFileReader;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
 import java.io.FileNotFoundException;
 import java.util.HashSet;
 import java.util.List;
@@ -19,9 +20,11 @@ public class StopWordsFilter {
     private Set<String> stopWordsContainer = new HashSet<>();
     private String STOP_WORDS_PATH = "stopword.txt";
 
+    @PostConstruct
     private void loadWords() {
+        MyFileReader myFileReader = null;
         try {
-            MyFileReader myFileReader = new MyFileReader(STOP_WORDS_PATH);
+            myFileReader = new MyFileReader(STOP_WORDS_PATH);
             String stopWords = myFileReader.readAll();
             String[] swords = stopWords.split(",");
             for (String word : swords) {
@@ -29,8 +32,8 @@ public class StopWordsFilter {
                     stopWordsContainer.add(word.trim());
                 }
             }
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException(String.format("Loading stopping word file %s failed", STOP_WORDS_PATH));
+        } finally {
+            myFileReader.close();
         }
     }
 
