@@ -1,4 +1,4 @@
-package tokenizer;
+package parser;
 
 import io.MyFileReader;
 import org.springframework.stereotype.Service;

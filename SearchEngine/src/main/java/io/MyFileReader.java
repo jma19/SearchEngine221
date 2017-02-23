@@ -64,16 +64,4 @@ public class MyFileReader {
             return null;
         }
     }
-
-    public static void main(String[] args) throws FileNotFoundException {
-        MyFileReader myFileReader = new MyFileReader("/Users/junm5/ICS221/TextProcessing/Inters2.txt");
-        String s = myFileReader.readAll();
-        String pattern = "[a-z0-9A-Z]+";
-        Pattern compile = Pattern.compile(pattern);
-        Matcher matcher = compile.matcher(s);
-
-        while (matcher.find()) {
-            System.out.println(matcher.group());
-        }
-    }
 }
