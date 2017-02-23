@@ -1,8 +1,9 @@
-package mode;
+package parser;
 
 import com.google.gson.reflect.TypeToken;
 import io.MyFileReader;
 import io.MyFileWriter;
+import mode.TermPos;
 import utils.JsonUtils;
 
 import javax.annotation.PostConstruct;
