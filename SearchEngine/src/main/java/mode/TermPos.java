@@ -1,15 +1,16 @@
 package mode;
 
-import java.util.HashSet;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 /**
  * Created by junm5 on 2/22/17.
  */
-public class TermPos {
+public class TermPos implements Comparable<TermPos> {
     //document id
     private int id;
-    private Set<Integer> pos;
+    private List<Integer> pos;
 
     public TermPos() {
         super();
@@ -17,7 +18,7 @@ public class TermPos {
 
     public TermPos(int id) {
         this.id = id;
-        pos = new HashSet();
+        pos = new ArrayList();
     }
 
     public void addPos(Integer pos) {
@@ -32,11 +33,32 @@ public class TermPos {
         this.id = id;
     }
 
-    public Set<Integer> getPos() {
+    public List<Integer> getPos() {
         return pos;
     }
 
-    public void setPos(Set<Integer> pos) {
+    public void setPos(List<Integer> pos) {
         this.pos = pos;
+    }
+
+    @Override
+    public int compareTo(TermPos o) {
+        return id - o.id;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        TermPos termPos = (TermPos) o;
+
+        return id == termPos.id;
+
+    }
+
+    @Override
+    public int hashCode() {
+        return id;
     }
 }

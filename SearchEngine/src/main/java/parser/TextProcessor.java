@@ -13,14 +13,14 @@ import java.util.regex.Pattern;
 @Service
 public class TextProcessor {
 
-    private String PATTERN = "[a-z0-9A-Z]+";
-    private Pattern compile;
+    private static String PATTERN = "[a-z0-9A-Z]+";
+    private static Pattern compile;
 
     public TextProcessor() {
         compile = Pattern.compile(PATTERN);
     }
 
-    public List<String> tokenize(String filePath) {
+    public static List<String> tokenize(String filePath) {
         if (filePath == null || filePath.equals("")) {
             System.out.println("Input file is null or empty");
             return new ArrayList();
@@ -39,7 +39,7 @@ public class TextProcessor {
         return new ArrayList();
     }
 
-    public void print(Map<String, Integer> map) {
+    public static void print(Map<String, Integer> map) {
         List<Map.Entry<String, Integer>> list = new ArrayList(map.entrySet());
         Comparator<Map.Entry<String, Integer>> valueComparator = (o1, o2) -> o2.getValue() - o1.getValue();
         Collections.sort(list, valueComparator);
@@ -49,7 +49,7 @@ public class TextProcessor {
         }
     }
 
-    public Map<String, Integer> computeWordFrequencies(List<String> input) {
+    public static Map<String, Integer> buildFreMap(List<String> input) {
         HashMap<String, Integer> res = new HashMap();
         if (input == null || input.isEmpty()) {
             return res;
@@ -60,7 +60,7 @@ public class TextProcessor {
         return res;
     }
 
-    public List<String> getTokens(String input) {
+    public static List<String> getTokens(String input) {
         Matcher matcher = compile.matcher(input.toLowerCase());
         List<String> res = new ArrayList();
         while (matcher.find()) {
