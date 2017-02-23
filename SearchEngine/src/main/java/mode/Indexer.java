@@ -1,6 +1,9 @@
 package mode;
 
-import parser.TextProcessor;
+import com.google.gson.reflect.TypeToken;
+import io.MyFileReader;
+import io.MyFileWriter;
+import utils.JsonUtils;
 
 import javax.annotation.PostConstruct;
 import java.util.*;
@@ -12,11 +15,39 @@ public class Indexer {
 
     private TreeMap<String, List<TermPos>> indexMap = new TreeMap<>((o1, o2) -> o1.compareTo(o2));
 
+    private String indexFile = "index.txt";
+
+    /**
+     * load index into memory
+     */
     @PostConstruct
-    private void loadData() {
+    private void loadIndexes() {
+        MyFileReader fileReader = null;
+        try {
+            fileReader = new MyFileReader(indexFile);
+            String line;
+            while ((line = fileReader.readLines()) != null) {
+                if (!line.isEmpty()) {
+                    String[] split = line.split(":");
+                    List<TermPos> termPoses = JsonUtils.fromJson(split[1], new TypeToken<List<TermPos>>() {
+                    });
+                    indexMap.put(split[0], termPoses);
+                }
+            }
+        } finally {
+            fileReader.close();
+        }
 
     }
 
+    /**
+     * {
+     * 'World': [1: [0,5,7]], [3: [2 5 9]]
+     * }
+     *
+     * @param docId
+     * @param tokens
+     */
     public void indexize(Integer docId, List<String> tokens) {
         Map<String, List<Integer>> posMap = buildPosMap(tokens);
         for (String key : posMap.keySet()) {
@@ -25,11 +56,10 @@ public class Indexer {
             termPos.setPos(posMap.get(key));
 
             List<TermPos> termPoseList = indexMap.get(key);
-            if(termPos == null){
+            if (termPos == null) {
                 termPoseList = new ArrayList();
-                indexMap.put(key,termPoseList);
+                indexMap.put(key, termPoseList);
             }
-
             termPoseList.add(termPos);
 
         }
@@ -51,4 +81,21 @@ public class Indexer {
         }
         return map;
     }
+
+    public void saveIndexes() {
+        MyFileWriter.createFile(indexFile);
+        MyFileWriter myFileWriter = null;
+        try {
+            myFileWriter = new MyFileWriter(indexFile, true);
+            for (String key : indexMap.keySet()) {
+                List<TermPos> termPoses = indexMap.get(key);
+                String text = new StringBuffer().append(key).append(":").append(JsonUtils.toJson(termPoses)).toString();
+                myFileWriter.writeLine(text);
+            }
+        } finally {
+            myFileWriter.close();
+        }
+
+    }
+
 }

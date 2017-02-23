@@ -26,12 +26,14 @@ public class UrlHandler {
         try {
             this.myFileReader = new MyFileReader(filePath);
             String json = myFileReader.readAll();
-            List<URLPath> urlPaths = JsonUtils.fromJson(json, new TypeToken<List<URLPath>>() {});
+            List<URLPath> urlPaths = JsonUtils.fromJson(json, new TypeToken<List<URLPath>>() {
+            });
             List<URLPath> collect = urlPaths.stream().filter(urlPath -> !UrlChecker.isValid(urlPath.getUrl())).collect(Collectors.toList());
             iterator = collect.iterator();
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException(String.format("FileNotFoundException % s", e.getMessage()));
+        } finally {
+            myFileReader.close();
         }
+
     }
 
     public boolean hashNext() {

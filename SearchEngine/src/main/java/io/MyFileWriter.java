@@ -1,6 +1,7 @@
 package io;
 
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 
@@ -11,6 +12,18 @@ public class MyFileWriter {
 
     private FileWriter fstream;
     private BufferedWriter out;
+
+    public static void createFile(String filePath) {
+        File file = new File(filePath);
+        if (file.exists()) {
+            file.delete();
+        }
+        try {
+            file.createNewFile();
+        } catch (IOException e) {
+            System.out.println(String.format("create file %s failed", filePath));
+        }
+    }
 
     public MyFileWriter(String filePath, boolean isAppend) {
         try {

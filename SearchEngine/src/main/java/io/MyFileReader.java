@@ -1,6 +1,7 @@
 package io;
 
 import java.io.*;
+import java.util.concurrent.Executors;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -14,10 +15,15 @@ public class MyFileReader {
     private String encoding = "ISO-8859-1";
     ;
 
-    public MyFileReader(String filePath) throws FileNotFoundException {
-        this.filePath = filePath;
-        in = new FileReader(filePath);
-        bufferedReader = new BufferedReader(in);
+    public MyFileReader(String filePath) {
+        try {
+            this.filePath = filePath;
+            in = new FileReader(filePath);
+            bufferedReader = new BufferedReader(in);
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(String.format("No such file: %s", filePath));
+        }
+
     }
 
     /**
