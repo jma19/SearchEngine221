@@ -4,7 +4,6 @@ import io.MyFileReader;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
-import java.io.FileNotFoundException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -18,7 +17,7 @@ import java.util.stream.Collectors;
 public class StopWordsFilter {
 
     private Set<String> stopWordsContainer = new HashSet<>();
-    private String STOP_WORDS_PATH = "stopword.txt";
+    private String STOP_WORDS_PATH = "index/stopword.txt";
 
     @PostConstruct
     private void loadWords() {
