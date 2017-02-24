@@ -4,7 +4,7 @@ import com.google.gson.reflect.TypeToken;
 import io.MyFileReader;
 import io.MyFileWriter;
 import mode.TermPos;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 import utils.JsonUtils;
 
 import javax.annotation.PostConstruct;
@@ -13,32 +13,34 @@ import java.util.*;
 /**
  * Created by junm5 on 2/22/17.
  */
-@Service
+@Component
 public class Indexer {
 
     private TreeMap<String, List<TermPos>> indexMap = new TreeMap<>((o1, o2) -> o1.compareTo(o2));
-    private String indexFile = "index/index.txt";
+    private String indexFile = "index.txt";
+
     /**
      * load index into memory
      */
     @PostConstruct
-    private void loadIndexes() {
+    public void loadIndexes() {
         MyFileReader fileReader = null;
         try {
             fileReader = new MyFileReader(indexFile);
             String line;
             while ((line = fileReader.readLines()) != null) {
                 if (!line.isEmpty()) {
-                    String[] split = line.split(":");
-                    List<TermPos> termPoses = JsonUtils.fromJson(split[1], new TypeToken<List<TermPos>>() {
+                    int splitIndex = line.indexOf(":");
+                    List<TermPos> termPoses = JsonUtils.fromJson(line.substring(splitIndex + 1), new TypeToken<List<TermPos>>() {
                     });
-                    indexMap.put(split[0], termPoses);
+                    indexMap.put(line.substring(0, splitIndex), termPoses);
                 }
             }
         } finally {
             fileReader.close();
         }
     }
+
     /**
      * {
      * 'World': [1: [0,5,7]], [3: [2 5 9]]
@@ -98,7 +100,17 @@ public class Indexer {
         }
     }
 
-    public Map<String, Double> caculateTFIDF(){
+    /**
+     *
+     * @param term
+     * @return
+     */
+    public List<TermPos> getTermPoses(String term) {
+        List<TermPos> termPoses = indexMap.get(term);
+        return termPoses == null ? new ArrayList<>() : termPoses;
+    }
+
+    public Map<String, Double> caculateTFIDF() {
         return null;
     }
 

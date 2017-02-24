@@ -20,6 +20,9 @@ public class StopWordsFilter {
     private Set<String> stopWordsContainer = new HashSet<>();
     private static String STOP_WORDS_PATH = "stopword.txt";
 
+    /**
+     * load stop words from stopword.txt file into memory
+     */
     @PostConstruct
     private void loadWords() {
         MyFileReader myFileReader = null;

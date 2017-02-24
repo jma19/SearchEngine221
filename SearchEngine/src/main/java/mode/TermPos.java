@@ -39,4 +39,12 @@ public class TermPos{
     public void setPos(List<Integer> pos) {
         this.pos = pos;
     }
+
+    @Override
+    public String toString() {
+        return "TermPos{" +
+                "id=" + id +
+                ", pos=" + pos +
+                '}';
+    }
 }
