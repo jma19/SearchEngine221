@@ -20,16 +20,18 @@ public class URLPath {
         return path;
     }
 
-    public void setPath(String path) {
+    public URLPath setPath(String path) {
         this.path = path;
+        return this;
     }
 
     public String getUrl() {
         return url;
     }
 
-    public void setUrl(String url) {
+    public URLPath setUrl(String url) {
         this.url = url;
+        return this;
     }
 
     @Override
