@@ -31,13 +31,15 @@ public class UrlChecker {
     private final static Pattern QFILTERS = Pattern.compile(".*[\\?@=].*");
 
     public static boolean isValid(String url) {
-        if (url.startsWith("www")) {
-            url = "http://" + url;
-        }
+        url = "http://" + url;
+
         if (Strings.isNullOrEmpty(url)) {
             return false;
         }
-        if (!HttpUtils.isValid(url)) {
+//        if (!HttpUtils.isValid(url)) {
+//            return false;
+//        }
+        if (url.contains("?")) {
             return false;
         }
         if (containDuplictePath(url)) {

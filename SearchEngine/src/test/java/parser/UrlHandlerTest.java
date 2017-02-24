@@ -1,5 +1,6 @@
 package parser;
 
+import mode.URLPath;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -9,7 +10,11 @@ import static org.junit.Assert.*;
  */
 public class UrlHandlerTest {
     @Test
-    public void testName() throws Exception {
-
+    public void should_load_url_from_josn_file() throws Exception {
+        UrlHandler handler = new UrlHandler();
+        while (handler.hashNext()){
+            URLPath next = handler.next();
+            System.out.println(next);
+        }
     }
 }
