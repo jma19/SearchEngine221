@@ -17,7 +17,7 @@ import java.util.*;
 public class Indexer {
 
     private TreeMap<String, List<TermPos>> indexMap = new TreeMap<>((o1, o2) -> o1.compareTo(o2));
-    private String indexFile = "index.txt";
+    private String indexFile = "index/index.txt";
     /**
      * load index into memory
      */
@@ -96,6 +96,10 @@ public class Indexer {
         } finally {
             myFileWriter.close();
         }
+    }
+
+    public Map<String, Double> caculateTFIDF(){
+        return null;
     }
 
 }
