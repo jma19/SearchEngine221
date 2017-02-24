@@ -7,7 +7,6 @@ import org.springframework.stereotype.Service;
 import utils.JsonUtils;
 import utils.UrlChecker;
 
-import java.io.FileNotFoundException;
 import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -33,7 +32,6 @@ public class UrlHandler {
         } finally {
             myFileReader.close();
         }
-
     }
 
     public boolean hashNext() {

@@ -4,6 +4,7 @@ import com.google.gson.reflect.TypeToken;
 import io.MyFileReader;
 import io.MyFileWriter;
 import mode.TermPos;
+import org.springframework.stereotype.Service;
 import utils.JsonUtils;
 
 import javax.annotation.PostConstruct;
@@ -12,12 +13,11 @@ import java.util.*;
 /**
  * Created by junm5 on 2/22/17.
  */
+@Service
 public class Indexer {
 
     private TreeMap<String, List<TermPos>> indexMap = new TreeMap<>((o1, o2) -> o1.compareTo(o2));
-
     private String indexFile = "index.txt";
-
     /**
      * load index into memory
      */
@@ -38,9 +38,7 @@ public class Indexer {
         } finally {
             fileReader.close();
         }
-
     }
-
     /**
      * {
      * 'World': [1: [0,5,7]], [3: [2 5 9]]
@@ -57,7 +55,7 @@ public class Indexer {
             termPos.setPos(posMap.get(key));
 
             List<TermPos> termPoseList = indexMap.get(key);
-            if (termPos == null) {
+            if (termPoseList == null) {
                 termPoseList = new ArrayList();
                 indexMap.put(key, termPoseList);
             }
@@ -66,7 +64,7 @@ public class Indexer {
         }
     }
 
-    private Map<String, List<Integer>> buildPosMap(List<String> tokens) {
+    public Map<String, List<Integer>> buildPosMap(List<String> tokens) {
         Map<String, List<Integer>> map = new HashMap<>();
         if (tokens == null || tokens.isEmpty()) {
             return map;
@@ -93,10 +91,11 @@ public class Indexer {
                 String text = new StringBuffer().append(key).append(":").append(JsonUtils.toJson(termPoses)).toString();
                 myFileWriter.writeLine(text);
             }
+            myFileWriter.flush();
+
         } finally {
             myFileWriter.close();
         }
-
     }
 
 }
