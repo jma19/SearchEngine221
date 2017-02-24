@@ -19,40 +19,36 @@ public class DocumentEntity {
         return this;
     }
 
-    public String getTitle() {
-        return title;
-    }
-
     public DocumentEntity setTitle(String title) {
         this.title = title;
         return this;
     }
-
-    public String getDescription() {
-        return description;
+    public String getTitle(){
+        return title;
     }
 
     public DocumentEntity setDescription(String description) {
         this.description = description;
         return this;
     }
-
-    public String getBody() {
-        return body;
+    public String getDescription() {
+        return description;
     }
-
     public DocumentEntity setBody(String body) {
         this.body = body;
         return this;
     }
-
-    public String getHeader() {
-        return header;
+    public String getBody(){
+        return body;
     }
 
     public DocumentEntity setHeader(String header) {
         this.header = header;
         return this;
+    }
+
+    public String getHeader() {
+        return header;
     }
 
     @Override
