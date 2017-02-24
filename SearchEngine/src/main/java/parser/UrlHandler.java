@@ -1,12 +1,11 @@
 package parser;
 
-import com.google.gson.reflect.TypeToken;
 import io.MyFileReader;
 import mode.URLPath;
 import org.springframework.stereotype.Service;
-import utils.JsonUtils;
 import utils.UrlChecker;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -17,16 +16,23 @@ import java.util.stream.Collectors;
 @Service
 public class UrlHandler {
     private MyFileReader myFileReader;
-    private String filePath = "bookkeeping.json";
+    private String filePath = "WEBPAGES_RAW/bookkeeping.json";
     private Iterator<URLPath> iterator;
 
 
     public UrlHandler() {
         try {
             this.myFileReader = new MyFileReader(filePath);
-            String json = myFileReader.readAll();
-            List<URLPath> urlPaths = JsonUtils.fromJson(json, new TypeToken<List<URLPath>>() {
-            });
+            List<URLPath> urlPaths = new ArrayList<>();
+            String urls = myFileReader.readAll();
+            String[] entites = urls.split(",");
+            for (int i = 0; i < entites.length; i++) {
+                if (!entites[i].trim().isEmpty()) {
+                    String[] split = entites[i].trim().split(":");
+                    urlPaths.add(new URLPath(split[0].trim(), split[1].trim()));
+                }
+            }
+
             List<URLPath> collect = urlPaths.stream().filter(urlPath -> !UrlChecker.isValid(urlPath.getUrl())).collect(Collectors.toList());
             iterator = collect.iterator();
         } finally {

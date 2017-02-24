@@ -31,6 +31,9 @@ public class UrlChecker {
     private final static Pattern QFILTERS = Pattern.compile(".*[\\?@=].*");
 
     public static boolean isValid(String url) {
+        if (url.startsWith("www")) {
+            url = "http://" + url;
+        }
         if (Strings.isNullOrEmpty(url)) {
             return false;
         }

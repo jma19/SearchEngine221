@@ -7,6 +7,15 @@ public class URLPath {
     private String path;
     private String url;
 
+    public URLPath(){
+        super();
+    }
+
+    public URLPath(String path, String url) {
+        this.path = path;
+        this.url = url;
+    }
+
     public String getPath() {
         return path;
     }
