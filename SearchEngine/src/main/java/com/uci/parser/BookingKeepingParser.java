@@ -1,10 +1,10 @@
-package parser;
+package com.uci.parser;
 
-import io.MyFileReader;
-import io.MyFileWriter;
-import mode.URLPath;
-import utils.JsonUtils;
-import utils.UrlChecker;
+import com.uci.io.MyFileReader;
+import com.uci.io.MyFileWriter;
+import com.uci.mode.URLPath;
+import com.uci.utils.JsonUtils;
+import com.uci.utils.UrlChecker;
 
 import java.util.ArrayList;
 import java.util.List;

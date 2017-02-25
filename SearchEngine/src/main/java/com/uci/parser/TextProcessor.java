@@ -1,6 +1,6 @@
-package parser;
+package com.uci.parser;
 
-import io.MyFileReader;
+import com.uci.io.MyFileReader;
 import org.springframework.stereotype.Service;
 
 import java.util.*;

@@ -1,7 +1,7 @@
-package parser;
+package com.uci.parser;
 
 import com.google.common.collect.Lists;
-import mode.TermPos;
+import com.uci.mode.TermPos;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;

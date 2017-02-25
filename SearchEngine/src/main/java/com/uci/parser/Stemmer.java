@@ -1,4 +1,4 @@
-package parser;
+package com.uci.parser;
 
 /**
  * Created by Chang on 2/23/17.

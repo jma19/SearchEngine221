@@ -1,6 +1,6 @@
-package parser;//package parser;
+package com.uci.parser;//package com.uci.parser;
 
-import mode.DocumentEntity;
+import com.uci.mode.DocumentEntity;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;

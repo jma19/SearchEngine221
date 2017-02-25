@@ -1,4 +1,4 @@
-package utils;
+package com.uci.utils;
 
 import com.github.kevinsawicki.http.HttpRequest;
 

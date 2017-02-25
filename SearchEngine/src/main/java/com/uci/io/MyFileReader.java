@@ -1,9 +1,6 @@
-package io;
+package com.uci.io;
 
 import java.io.*;
-import java.util.concurrent.Executors;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * Created by junm5 on 1/18/17.

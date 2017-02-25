@@ -1,4 +1,4 @@
-package utils;
+package com.uci.utils;
 
 /**
  * Created by junm5 on 2/24/17.

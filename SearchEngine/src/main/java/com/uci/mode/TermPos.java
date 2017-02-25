@@ -1,4 +1,4 @@
-package mode;
+package com.uci.mode;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,8 +1,8 @@
-package parser;
+package com.uci.parser;
 
-import mode.URLPath;
+import com.uci.mode.URLPath;
 import org.junit.Test;
-import utils.SysPathUtil;
+import com.uci.utils.SysPathUtil;
 
 import java.util.List;
 
