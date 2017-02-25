@@ -16,7 +16,7 @@ import java.util.List;
 @Service
 public class UrlHandler {
     private MyFileReader myFileReader;
-    private String validUrl = SysPathUtil.getSysPath() + "conf/validUrl.json";
+    private String validUrl = SysPathUtil.getSysPath() + "/conf/validUrl.json";
 
     private Iterator<URLPath> iterator;
     private int size = 0;

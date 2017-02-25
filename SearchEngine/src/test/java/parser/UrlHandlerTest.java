@@ -14,7 +14,7 @@ public class UrlHandlerTest {
     @Test
     public void should_load_url_from_josn_file() throws Exception {
         UrlHandler handler = new UrlHandler();
-        assertThat(handler.size(), is(18637));
+        assertThat(handler.size(), is(20730));
     }
 
     @Test

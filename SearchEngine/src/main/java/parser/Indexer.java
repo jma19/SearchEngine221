@@ -18,7 +18,7 @@ import java.util.*;
 public class Indexer {
 
     private TreeMap<String, List<TermPos>> indexMap = new TreeMap<>((o1, o2) -> o1.compareTo(o2));
-    private String indexFile = SysPathUtil.getSysPath() + "conf/index.txt";
+    private String indexFile = SysPathUtil.getSysPath() + "/conf/index.txt";
 
     /**
      * load index into memory
