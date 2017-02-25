@@ -86,14 +86,4 @@ public class Htmlparser {
         Document document = load_url(url);
         return new DocumentEntity().setUrl(url).setTitle(getTitle(document)).setDescription(getDescription(document)).setBody(getBody(document));
     }
-
-    public static void main(String[] args) {
-        String url = "http://www.ics.uci.edu/~dvk/pub/SIGMODR04_dvk.html";
-            DocumentEntity doc = getDocumnet(url);
-            System.out.println(doc);
-//			document doc = new document(url);
-//			String a = doc.description;
-//			System.out.println(a);
-    }
-
 }

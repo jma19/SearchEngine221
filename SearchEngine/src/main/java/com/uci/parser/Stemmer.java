@@ -4,6 +4,8 @@ package com.uci.parser;
  * Created by Chang on 2/23/17.
  */
 
+import org.springframework.stereotype.Component;
+
 /**
  * Stemmer, implementing the Porter Stemming Algorithm
  * <p>
@@ -11,7 +13,7 @@ package com.uci.parser;
  * word can be provided a character at time (by calling add()), or at once
  * by calling one of the various stem(something) methods.
  */
-
+@Component
 public class Stemmer {
     private char[] b;
     private int i,     /* offset into b */
@@ -483,13 +485,6 @@ public class Stemmer {
         }
         stem();
         return toString();
-    }
-
-    public static void main(String[] args) {
-        Stemmer stemmer = new Stemmer();
-
-        System.out.println(stemmer.stem("fishing"));
-        System.out.println("stem : " + stemmer.stem("brought"));
     }
 }
 

@@ -1,8 +1,8 @@
 package com.uci.parser;
 
 import com.uci.io.MyFileReader;
-import org.springframework.stereotype.Service;
 import com.uci.utils.SysPathUtil;
+import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import java.util.HashSet;
@@ -14,11 +14,11 @@ import java.util.stream.Collectors;
  * Created by junm5 on 2/22/17.
  * this service is aim to filter out the stop words in the tokens
  */
-@Service
+@Component(value = "stopWordsFilter")
 public class StopWordsFilter {
 
     private Set<String> stopWordsContainer = new HashSet<>();
-    private static String STOP_WORDS_PATH = SysPathUtil.getSysPath() + "/SearchEngine/conf/stopword.txt";
+    private static String STOP_WORDS_PATH = SysPathUtil.getSysPath() + "/conf/stopword.txt";
 
     /**
      * load stop words from stopword.txt file into memory
@@ -53,7 +53,7 @@ public class StopWordsFilter {
         if (tokens == null || tokens.isEmpty() || stopWordsContainer.isEmpty()) {
             return tokens;
         }
-        return tokens.stream().filter(s -> stopWordsContainer.contains(s))
+        return tokens.stream().filter(s -> !stopWordsContainer.contains(s))
                 .collect(Collectors.toList());
     }
 

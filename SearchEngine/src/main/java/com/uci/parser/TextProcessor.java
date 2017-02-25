@@ -1,6 +1,7 @@
 package com.uci.parser;
 
 import com.uci.io.MyFileReader;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
@@ -13,12 +14,18 @@ import java.util.regex.Pattern;
 @Component
 public class TextProcessor {
 
-    private String PATTERN = "[a-z0-9A-Z]+";
-    private Pattern compile;
+    @Autowired
+    private StopWordsFilter stopWordsFilter;
 
-    public TextProcessor() {
-        compile = Pattern.compile(PATTERN);
-    }
+    @Autowired
+    private Stemmer stemmer;
+
+    private String PATTERN = "[a-z0-9A-Z]+";
+    private Pattern compile = Pattern.compile(PATTERN);
+
+//   // public TextProcessor() {
+//        compile = Pattern.compile(PATTERN);
+//    }
 
     public List<String> tokenize(String filePath) {
         if (filePath == null || filePath.equals("")) {
@@ -68,12 +75,11 @@ public class TextProcessor {
         }
         return res;
     }
-    public static List<String> stemstop (List<String> tokens){
+
+    public List<String> stemstop(List<String> tokens) {
         List<String> res = new ArrayList<>();
-        StopWordsFilter stopWordsFilter = new StopWordsFilter();
         tokens = stopWordsFilter.filter(tokens);
-        Stemmer stemmer = new Stemmer();
-        for(String s : tokens){
+        for (String s : tokens) {
             String out = stemmer.stem(s);
             res.add(out);
         }
