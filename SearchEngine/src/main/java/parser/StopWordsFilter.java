@@ -3,6 +3,7 @@ package parser;
 import io.MyFileReader;
 import io.MyFileWriter;
 import org.springframework.stereotype.Service;
+import utils.SysPathUtil;
 
 import javax.annotation.PostConstruct;
 import java.util.HashSet;
@@ -18,7 +19,7 @@ import java.util.stream.Collectors;
 public class StopWordsFilter {
 
     private Set<String> stopWordsContainer = new HashSet<>();
-    private static String STOP_WORDS_PATH = "stopword.txt";
+    private static String STOP_WORDS_PATH = SysPathUtil.getSysPath() + "conf/stopword.txt";
 
     /**
      * load stop words from stopword.txt file into memory

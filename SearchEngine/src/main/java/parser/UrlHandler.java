@@ -5,6 +5,7 @@ import io.MyFileReader;
 import mode.URLPath;
 import org.springframework.stereotype.Service;
 import utils.JsonUtils;
+import utils.SysPathUtil;
 
 import java.util.Iterator;
 import java.util.List;
@@ -15,7 +16,7 @@ import java.util.List;
 @Service
 public class UrlHandler {
     private MyFileReader myFileReader;
-    private String validUrl = "WEBPAGES_RAW/validUrl.json";
+    private String validUrl = SysPathUtil.getSysPath() + "conf/validUrl.json";
 
     private Iterator<URLPath> iterator;
     private int size = 0;
