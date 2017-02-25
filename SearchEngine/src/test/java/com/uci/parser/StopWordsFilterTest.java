@@ -1,4 +1,4 @@
-package parser;
+package com.uci.parser;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;

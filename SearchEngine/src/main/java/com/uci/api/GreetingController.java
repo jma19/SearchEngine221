@@ -1,6 +1,6 @@
-package api;
+package com.uci.api;
 
-import mode.Abstract;
+import com.uci.mode.Abstract;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;

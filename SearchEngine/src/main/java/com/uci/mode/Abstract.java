@@ -1,4 +1,4 @@
-package mode;
+package com.uci.mode;
 
 /**
  * Created by junm5 on 2/24/17.

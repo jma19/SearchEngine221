@@ -1,6 +1,6 @@
-package parser;
+package com.uci.parser;
 
-import mode.URLPath;
+import com.uci.mode.URLPath;
 import org.junit.Test;
 
 import static org.hamcrest.MatcherAssert.assertThat;

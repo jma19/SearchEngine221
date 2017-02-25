@@ -1,12 +1,12 @@
-package parser;
+package com.uci.parser;
 
 import com.google.gson.reflect.TypeToken;
-import io.MyFileReader;
-import io.MyFileWriter;
-import mode.TermPos;
+import com.uci.io.MyFileReader;
+import com.uci.io.MyFileWriter;
+import com.uci.mode.TermPos;
 import org.springframework.stereotype.Component;
-import utils.JsonUtils;
-import utils.SysPathUtil;
+import com.uci.utils.JsonUtils;
+import com.uci.utils.SysPathUtil;
 
 import javax.annotation.PostConstruct;
 import java.util.*;
@@ -18,7 +18,7 @@ import java.util.*;
 public class Indexer {
 
     private TreeMap<String, List<TermPos>> indexMap = new TreeMap<>((o1, o2) -> o1.compareTo(o2));
-    private String indexFile = SysPathUtil.getSysPath() + "/conf/index.txt";
+    private String indexFile = SysPathUtil.getSysPath() + "/SearchEngine/conf/index.txt";
 
     /**
      * load index into memory

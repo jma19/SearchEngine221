@@ -1,12 +1,13 @@
-package parser;
+package com.uci.parser;
 
 import com.google.gson.reflect.TypeToken;
-import io.MyFileReader;
-import mode.URLPath;
+import com.uci.io.MyFileReader;
+import com.uci.mode.URLPath;
 import org.springframework.stereotype.Service;
-import utils.JsonUtils;
-import utils.SysPathUtil;
+import com.uci.utils.JsonUtils;
+import com.uci.utils.SysPathUtil;
 
+import javax.annotation.PostConstruct;
 import java.util.Iterator;
 import java.util.List;
 
@@ -16,12 +17,14 @@ import java.util.List;
 @Service
 public class UrlHandler {
     private MyFileReader myFileReader;
-    private String validUrl = SysPathUtil.getSysPath() + "/conf/validUrl.json";
+    private String validUrl = SysPathUtil.getSysPath() + "/SearchEngine/conf/validUrl.json";
 
     private Iterator<URLPath> iterator;
     private int size = 0;
 
-    public UrlHandler() {
+    @PostConstruct
+    private void loadUrls(){
+        System.out.println("read the file with path: "+validUrl);
         try {
             this.myFileReader = new MyFileReader(validUrl);
             String urls = myFileReader.readAll();
