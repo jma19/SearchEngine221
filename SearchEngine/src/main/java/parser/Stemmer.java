@@ -12,7 +12,7 @@ package parser;
  * by calling one of the various stem(something) methods.
  */
 
-public class stemmer {
+public class Stemmer {
     private char[] b;
     private int i,     /* offset into b */
             i_end, /* offset to end of stemmed word */
@@ -20,7 +20,7 @@ public class stemmer {
     private static final int INC = 50;
 
     /* unit of size whereby b is increased */
-    public stemmer() {
+    public Stemmer() {
         b = new char[INC];
         i = 0;
         i_end = 0;
@@ -486,7 +486,7 @@ public class stemmer {
     }
 
     public static void main(String[] args) {
-        stemmer stemmer = new stemmer();
+        Stemmer stemmer = new Stemmer();
 
         System.out.println(stemmer.stem("fishing"));
         System.out.println("stem : " + stemmer.stem("fishes"));
