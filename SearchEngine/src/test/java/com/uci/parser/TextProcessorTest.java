@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by junm5 on 2/24/17.
@@ -21,7 +21,7 @@ public class TextProcessorTest {
 
     @Test
     public void should_test_filter_stop_words() throws Exception {
-        ArrayList<String> list = Lists.newArrayList("a", "application", "brought");
-
+        List<String> list = Lists.newArrayList("a", "application", "brought");
     }
+
 }
