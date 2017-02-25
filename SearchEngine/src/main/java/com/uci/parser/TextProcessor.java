@@ -1,7 +1,7 @@
 package com.uci.parser;
 
 import com.uci.io.MyFileReader;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
 import java.util.*;
 import java.util.regex.Matcher;
@@ -10,17 +10,17 @@ import java.util.regex.Pattern;
 /**
  * Created by junm5 on 1/17/17.
  */
-@Service
+@Component
 public class TextProcessor {
 
-    private static String PATTERN = "[a-z0-9A-Z]+";
-    private static Pattern compile;
+    private String PATTERN = "[a-z0-9A-Z]+";
+    private Pattern compile;
 
     public TextProcessor() {
         compile = Pattern.compile(PATTERN);
     }
 
-    public static List<String> tokenize(String filePath) {
+    public List<String> tokenize(String filePath) {
         if (filePath == null || filePath.equals("")) {
             System.out.println("Input file is null or empty");
             return new ArrayList();
@@ -39,7 +39,7 @@ public class TextProcessor {
         return new ArrayList();
     }
 
-    public static void print(Map<String, Integer> map) {
+    public void print(Map<String, Integer> map) {
         List<Map.Entry<String, Integer>> list = new ArrayList(map.entrySet());
         Comparator<Map.Entry<String, Integer>> valueComparator = (o1, o2) -> o2.getValue() - o1.getValue();
         Collections.sort(list, valueComparator);
@@ -49,7 +49,7 @@ public class TextProcessor {
         }
     }
 
-    public static Map<String, Integer> buildFreMap(List<String> input) {
+    public Map<String, Integer> buildFreMap(List<String> input) {
         HashMap<String, Integer> res = new HashMap();
         if (input == null || input.isEmpty()) {
             return res;
@@ -60,7 +60,7 @@ public class TextProcessor {
         return res;
     }
 
-    public static List<String> getTokens(String input) {
+    public List<String> getTokens(String input) {
         Matcher matcher = compile.matcher(input.toLowerCase());
         List<String> res = new ArrayList();
         while (matcher.find()) {
