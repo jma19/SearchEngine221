@@ -13,7 +13,6 @@ public class MyFileReader {
     private FileReader in = null;
     private String filePath;
     private String encoding = "ISO-8859-1";
-    ;
 
     public MyFileReader(String filePath) {
         try {

@@ -17,7 +17,7 @@ import java.util.*;
 public class Indexer {
 
     private TreeMap<String, List<TermPos>> indexMap = new TreeMap<>((o1, o2) -> o1.compareTo(o2));
-    private String indexFile = "index.txt";
+    private String indexFile = "/Users/junm5/workplace/SearchEngine221/index.txt";
 
     /**
      * load index into memory
