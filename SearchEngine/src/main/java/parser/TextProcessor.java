@@ -68,4 +68,15 @@ public class TextProcessor {
         }
         return res;
     }
+    public static List<String> stemstop (List<String> tokens){
+        List<String> res = new ArrayList<>();
+        StopWordsFilter stopWordsFilter = new StopWordsFilter();
+        tokens = stopWordsFilter.filter(tokens);
+        Stemmer stemmer = new Stemmer();
+        for(String s : tokens){
+            String out = stemmer.stem(s);
+            res.add(out);
+        }
+        return res;
+    }
 }

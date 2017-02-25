@@ -489,7 +489,7 @@ public class Stemmer {
         Stemmer stemmer = new Stemmer();
 
         System.out.println(stemmer.stem("fishing"));
-        System.out.println("stem : " + stemmer.stem("fishes"));
+        System.out.println("stem : " + stemmer.stem("brought"));
     }
 }
 
