@@ -13,23 +13,18 @@ import java.util.stream.Collectors;
 /**
  * Created by junm5 on 2/23/17.
  */
-public class BookingKeepingParser {
+public class BookUrlParser {
 
-    public List<URLPath> loadUrlPaths(String filePath) {
+    public List<URLPath> loadUrlPathsFrom(String filePath) {
         MyFileReader myFileReader = null;
         try {
             myFileReader = new MyFileReader(filePath);
             List<URLPath> urlPaths = new ArrayList<>();
-            String urls = myFileReader.readAll().trim().replace("\n", "");
-            String[] entites = urls.split(",");
-            for (int i = 0; i < entites.length; i++) {
-                String trim = entites[i].trim();
-                if (!trim.isEmpty()) {
-                    String[] split = trim.split(":");
-                    if (split.length == 2) {
-                        urlPaths.add(new URLPath(split[0].trim(), split[1].trim()));
-                    }
-
+            String line;
+            while ((line = myFileReader.readLines()) != null) {
+                if (!line.isEmpty()) {
+                    String[] split = line.split("\t");
+                    urlPaths.add(new URLPath(split[0].trim(), split[1].trim()));
                 }
             }
             return urlPaths.stream()

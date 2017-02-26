@@ -15,7 +15,7 @@ import java.util.List;
  * Created by junm5 on 2/22/17.
  */
 @Service
-public class UrlHandler {
+public class BookUrlRepository {
     private MyFileReader myFileReader;
     private String validUrl = SysPathUtil.getSysPath() + "/conf/validUrl.json";
 
