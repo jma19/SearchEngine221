@@ -1,5 +1,6 @@
 package com.uci.parser;
 
+import com.uci.indexer.StopWordsFilter;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;

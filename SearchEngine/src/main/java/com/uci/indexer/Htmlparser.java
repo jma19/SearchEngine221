@@ -1,4 +1,4 @@
-package com.uci.parser;//package com.uci.parser;
+package com.uci.indexer;//package com.uci.parser;
 
 import com.uci.mode.DocumentEntity;
 import org.jsoup.Jsoup;

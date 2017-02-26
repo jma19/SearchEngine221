@@ -1,4 +1,4 @@
-package com.uci.parser;
+package com.uci.indexer;
 
 import com.uci.io.MyFileReader;
 import org.springframework.beans.factory.annotation.Autowired;

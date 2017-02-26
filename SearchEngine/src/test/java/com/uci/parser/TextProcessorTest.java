@@ -1,6 +1,7 @@
 package com.uci.parser;
 
 import com.google.common.collect.Lists;
+import com.uci.indexer.TextProcessor;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;

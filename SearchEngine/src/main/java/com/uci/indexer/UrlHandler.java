@@ -1,4 +1,4 @@
-package com.uci.parser;
+package com.uci.indexer;
 
 import com.google.gson.reflect.TypeToken;
 import com.uci.io.MyFileReader;

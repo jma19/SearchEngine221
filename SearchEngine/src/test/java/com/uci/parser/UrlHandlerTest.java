@@ -1,5 +1,6 @@
 package com.uci.parser;
 
+import com.uci.indexer.UrlHandler;
 import com.uci.mode.URLPath;
 import org.junit.Test;
 
