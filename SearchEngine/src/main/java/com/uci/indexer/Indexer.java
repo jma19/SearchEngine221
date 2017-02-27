@@ -3,7 +3,7 @@ package com.uci.indexer;
 import com.google.gson.reflect.TypeToken;
 import com.uci.io.MyFileReader;
 import com.uci.io.MyFileWriter;
-import com.uci.mode.TermPos;
+import com.uci.mode.IndexEntry;
 import org.springframework.stereotype.Component;
 import com.uci.utils.JsonUtils;
 import com.uci.utils.SysPathUtil;
@@ -17,8 +17,8 @@ import java.util.*;
 @Component
 public class Indexer {
 
-    private TreeMap<String, List<TermPos>> indexMap = new TreeMap<>((o1, o2) -> o1.compareTo(o2));
-    private String indexFile = SysPathUtil.getSysPath() + "/SearchEngine/conf/index.txt";
+    private TreeMap<String, List<IndexEntry>> indexMap = new TreeMap<>((o1, o2) -> o1.compareTo(o2));
+    private String indexFile = SysPathUtil.getSysPath() + "/conf/index.txt";
 
     /**
      * load index into memory
@@ -32,7 +32,7 @@ public class Indexer {
             while ((line = fileReader.readLines()) != null) {
                 if (!line.isEmpty()) {
                     int splitIndex = line.indexOf(":");
-                    List<TermPos> termPoses = JsonUtils.fromJson(line.substring(splitIndex + 1), new TypeToken<List<TermPos>>() {
+                    List<IndexEntry> termPoses = JsonUtils.fromJson(line.substring(splitIndex + 1), new TypeToken<List<IndexEntry>>() {
                     });
                     indexMap.put(line.substring(0, splitIndex), termPoses);
                 }
@@ -40,6 +40,10 @@ public class Indexer {
         } finally {
             fileReader.close();
         }
+    }
+
+    public List<IndexEntry> getIndexEntity(String term) {
+        return indexMap.get(term);
     }
 
     /**
@@ -54,10 +58,10 @@ public class Indexer {
         Map<String, List<Integer>> posMap = buildPosMap(tokens);
         for (String key : posMap.keySet()) {
 
-            TermPos termPos = new TermPos(docId);
+            IndexEntry termPos = new IndexEntry(docId);
             termPos.setPos(posMap.get(key));
 
-            List<TermPos> termPoseList = indexMap.get(key);
+            List<IndexEntry> termPoseList = indexMap.get(key);
             if (termPoseList == null) {
                 termPoseList = new ArrayList();
                 indexMap.put(key, termPoseList);
@@ -90,7 +94,7 @@ public class Indexer {
         try {
             myFileWriter = new MyFileWriter(indexFile, true);
             for (String key : indexMap.keySet()) {
-                List<TermPos> termPoses = indexMap.get(key);
+                List<IndexEntry> termPoses = indexMap.get(key);
                 String text = new StringBuffer().append(key).append(":").append(JsonUtils.toJson(termPoses)).toString();
                 myFileWriter.writeLine(text);
             }
@@ -105,8 +109,8 @@ public class Indexer {
      * @param term
      * @return
      */
-    public List<TermPos> getTermPoses(String term) {
-        List<TermPos> termPoses = indexMap.get(term);
+    public List<IndexEntry> getIndexEntities(String term) {
+        List<IndexEntry> termPoses = indexMap.get(term);
         return termPoses == null ? new ArrayList<>() : termPoses;
     }
 

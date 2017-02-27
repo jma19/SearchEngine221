@@ -6,16 +6,20 @@ import java.util.List;
 /**
  * Created by junm5 on 2/22/17.
  */
-public class TermPos{
+public class IndexEntry {
     //document id
     private int id;
     private List<Integer> pos;
 
-    public TermPos() {
+    public IndexEntry() {
         super();
     }
 
-    public TermPos(int id) {
+    public int getTermFre(){
+        return pos.size();
+    }
+
+    public IndexEntry(int id) {
         this.id = id;
         pos = new ArrayList();
     }
@@ -42,7 +46,7 @@ public class TermPos{
 
     @Override
     public String toString() {
-        return "TermPos{" +
+        return "IndexEntry{" +
                 "id=" + id +
                 ", pos=" + pos +
                 '}';

@@ -9,6 +9,7 @@ flush privileges;
 create database miya;
 ### create tables
 
+~~~
 CREATE TABLE `Document` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT 'primary key',
   `url` int(11) NOT NULL DEFAULT '0' COMMENT 'url',
@@ -19,3 +20,4 @@ CREATE TABLE `Document` (
   KEY `ix_created_at` (`created_at`),
   KEY `ix_updated_at` (`updated_at`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8 COMMENT='Document table';
+~~~

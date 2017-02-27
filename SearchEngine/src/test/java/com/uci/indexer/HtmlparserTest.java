@@ -1,6 +1,6 @@
 package com.uci.indexer;
 
-import com.uci.mode.DocumentEntity;
+import com.uci.mode.Document;
 import org.junit.Test;
 
 /**
@@ -17,7 +17,7 @@ public class HtmlparserTest {
 //        String res=m_html.replaceAll(""); //过滤html标签
 //        System.out.println(res);
 
-        DocumentEntity documnet = Htmlparser.getDocumnet("https://eee.uci.edu/");
+        Document documnet = Htmlparser.getDocumnet("https://eee.uci.edu/");
         System.out.println(documnet);
     }
 }

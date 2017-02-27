@@ -23,10 +23,6 @@ public class TextProcessor {
     private String PATTERN = "[a-z0-9A-Z]+";
     private Pattern compile = Pattern.compile(PATTERN);
 
-//   // public TextProcessor() {
-//        compile = Pattern.compile(PATTERN);
-//    }
-
     public List<String> tokenize(String filePath) {
         if (filePath == null || filePath.equals("")) {
             System.out.println("Input file is null or empty");

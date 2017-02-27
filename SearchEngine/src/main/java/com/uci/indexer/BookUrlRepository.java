@@ -8,6 +8,7 @@ import com.uci.utils.JsonUtils;
 import com.uci.utils.SysPathUtil;
 
 import javax.annotation.PostConstruct;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
@@ -17,7 +18,7 @@ import java.util.List;
 @Service
 public class BookUrlRepository {
     private MyFileReader myFileReader;
-    private String validUrl = SysPathUtil.getSysPath() + "/SearchEngine/conf/validUrl.json";
+    private String validUrl = SysPathUtil.getSysPath() + "/conf/validUrl.json";
 
     private Iterator<URLPath> iterator;
     private int size = 0;
@@ -30,6 +31,7 @@ public class BookUrlRepository {
             String urls = myFileReader.readAll();
             List<URLPath> urlPaths = JsonUtils.fromJson(urls, new TypeToken<List<URLPath>>() {
             });
+            urlPaths.sort((o1, o2) -> o1.getPath().compareTo(o2.getPath()));
             size = urlPaths.size();
             iterator = urlPaths.iterator();
         } finally {

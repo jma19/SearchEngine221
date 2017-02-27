@@ -3,23 +3,33 @@ package com.uci.mode;
 /**
  * Created by junm5 on 2/23/17.
  */
-public class DocumentEntity {
+public class Document {
     public String url;
     public String title;
+    public String text;
     public String description;
     public String body;
     public String header;
+
+    public String getText() {
+        return text;
+    }
+
+    public Document setText(String text) {
+        this.text = text;
+        return this;
+    }
 
     public String getUrl() {
         return url;
     }
 
-    public DocumentEntity setUrl(String url) {
+    public Document setUrl(String url) {
         this.url = url;
         return this;
     }
 
-    public DocumentEntity setTitle(String title) {
+    public Document setTitle(String title) {
         this.title = title;
         return this;
     }
@@ -27,14 +37,14 @@ public class DocumentEntity {
         return title;
     }
 
-    public DocumentEntity setDescription(String description) {
+    public Document setDescription(String description) {
         this.description = description;
         return this;
     }
     public String getDescription() {
         return description;
     }
-    public DocumentEntity setBody(String body) {
+    public Document setBody(String body) {
         this.body = body;
         return this;
     }
@@ -42,7 +52,7 @@ public class DocumentEntity {
         return body;
     }
 
-    public DocumentEntity setHeader(String header) {
+    public Document setHeader(String header) {
         this.header = header;
         return this;
     }
@@ -53,7 +63,7 @@ public class DocumentEntity {
 
     @Override
     public String toString() {
-        return "DocumentEntity{" +
+        return "Document{" +
                 "url='" + url + '\'' +
                 ", title='" + title + '\'' +
                 ", description='" + description + '\'' +
