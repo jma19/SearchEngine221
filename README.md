@@ -12,8 +12,9 @@ create database miya;
 ~~~
 CREATE TABLE `Document` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT 'primary key',
-  `url` int(11) NOT NULL DEFAULT '0' COMMENT 'url',
-  `text` bigint(20) DEFAULT '0' COMMENT 'extracted html content',
+  `title` varchar(200) NOT NULL DEFAULT '' COMMENT 'extracted html content',
+  `text` varchar(5000) NOT NULL DEFAULT '' COMMENT 'extracted html content',
+  `url` varchar(50) NOT NULL DEFAULT '' COMMENT 'url',
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'created time',
   `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'updated time',
   PRIMARY KEY (`id`),
