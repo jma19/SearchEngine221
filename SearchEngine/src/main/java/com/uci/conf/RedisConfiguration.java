@@ -4,10 +4,9 @@ import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.joda.JodaModule;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.data.redis.cache.RedisCacheManager;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
@@ -20,23 +19,19 @@ import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
  * Created by junm5 on 2/27/17.
  */
 @Configuration
-@PropertySource("application.properties")
+@EnableCaching
 public class RedisConfiguration {
-    @Value("${spring.redis.host}")
-    private String redisHostName;
-
-    @Value("${spring.redis.port}")
-    private int redisPort;
 
     @Bean
     public static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
         return new PropertySourcesPlaceholderConfigurer();
     }
+
     @Bean
     public RedisConnectionFactory jedisConnectionFactory() {
         JedisConnectionFactory jedisConnectionFactory = new JedisConnectionFactory();
-        jedisConnectionFactory.setHostName(redisHostName);
-        jedisConnectionFactory.setPort(redisPort);
+        jedisConnectionFactory.setHostName("localhost");
+        jedisConnectionFactory.setPort(6379);
         jedisConnectionFactory.setUsePool(true);
         return jedisConnectionFactory;
     }
@@ -58,6 +53,7 @@ public class RedisConfiguration {
 
         return template;
     }
+
     @Bean
     public RedisCacheManager cacheManager() {
         RedisCacheManager redisCacheManager = new RedisCacheManager(redisTemplate(jedisConnectionFactory()));

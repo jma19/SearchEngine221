@@ -44,35 +44,13 @@ public class Document {
         return title;
     }
 
-//    public Document setDescription(String description) {
-//        this.description = description;
-//        return this;
-//    }
-//    public String getDescription() {
-//        return description;
-//    }
-//    public Document setBody(String body) {
-//        this.body = body;
-//        return this;
-//    }
-//    public String getBody(){
-//        return body;
-//    }
-//
-//    public Document setHeader(String header) {
-//        this.header = header;
-//        return this;
-//    }
-//
-//    public String getHeader() {
-//        return header;
-//    }
-
     @Override
     public String toString() {
         return "Document{" +
-                "url='" + url + '\'' +
+                "id=" + id +
+                ", url='" + url + '\'' +
                 ", title='" + title + '\'' +
+                ", text='" + text + '\'' +
                 '}';
     }
 }

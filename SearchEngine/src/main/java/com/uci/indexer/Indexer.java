@@ -5,6 +5,7 @@ import com.uci.io.MyFileReader;
 import com.uci.io.MyFileWriter;
 import com.uci.mode.Document;
 import com.uci.mode.IndexEntry;
+import com.uci.service.DBRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import com.uci.utils.JsonUtils;
@@ -20,8 +21,8 @@ import java.util.*;
 public class Indexer {
 
     private TreeMap<String, List<IndexEntry>> indexMap = new TreeMap<>((o1, o2) -> o1.compareTo(o2));
-    private String indexFile = SysPathUtil.getSysPath() + "/SearchEngine/conf/index.txt";
-//    private String indexFile = SysPathUtil.getSysPath() + "/conf/index.txt";
+//    private String indexFile = SysPathUtil.getSysPath() + "/SearchEngine/conf/index.txt";
+    private String indexFile = SysPathUtil.getSysPath() + "/conf/index.txt";
 
 
     /**
@@ -29,11 +30,6 @@ public class Indexer {
      */
     @PostConstruct
     public void loadIndexes() {
-        Document document = new Document()
-                .setTitle("This is a test")
-                .setUrl("http://www.ics.uci.com/")
-                .setText("You are so smart");
-
         MyFileReader fileReader = null;
         try {
             fileReader = new MyFileReader(indexFile);
