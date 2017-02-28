@@ -83,6 +83,6 @@ public class Htmlparser {
 
     public static Document getDocumnet(String url) {
         org.jsoup.nodes.Document document = load_url(url);
-        return new Document().setUrl(url).setTitle(getTitle(document)).setDescription(getDescription(document)).setBody(getBody(document));
+        return new Document().setUrl(url).setTitle(getTitle(document)).setUrl(getBody(document));
     }
 }

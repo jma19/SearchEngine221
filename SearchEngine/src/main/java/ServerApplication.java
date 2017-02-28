@@ -1,10 +1,12 @@
-import com.uci.utils.SysPathUtil;
 import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
 
-@SpringBootApplication(scanBasePackages = "com.uci.*")
+@Configuration
+@EnableAutoConfiguration
+@ComponentScan(basePackages = "com.uci.*")
 public class ServerApplication {
-
     public static void main(String[] args) {
         //http://ketqi.blog.51cto.com/1130608/325255/
         SpringApplication.run(ServerApplication.class, args);

@@ -7,7 +7,7 @@ import java.io.*;
 import java.util.Map.Entry;
 import java.util.Iterator;
 
-public class tfidf {
+public class TfIdf{
 
     public static void calculateTFScore(int docsize, TreeMap<String, List<IndexEntry>> map) {
         TreeMap indexMap = map;

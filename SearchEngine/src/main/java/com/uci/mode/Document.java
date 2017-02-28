@@ -4,12 +4,19 @@ package com.uci.mode;
  * Created by junm5 on 2/23/17.
  */
 public class Document {
-    public String url;
-    public String title;
-    public String text;
-    public String description;
-    public String body;
-    public String header;
+    private Integer id;
+    private String url;
+    private String title;
+    private String text;
+
+    public Integer getId() {
+        return id;
+    }
+
+    public Document setId(Integer id) {
+        this.id = id;
+        return this;
+    }
 
     public String getText() {
         return text;
@@ -37,38 +44,35 @@ public class Document {
         return title;
     }
 
-    public Document setDescription(String description) {
-        this.description = description;
-        return this;
-    }
-    public String getDescription() {
-        return description;
-    }
-    public Document setBody(String body) {
-        this.body = body;
-        return this;
-    }
-    public String getBody(){
-        return body;
-    }
-
-    public Document setHeader(String header) {
-        this.header = header;
-        return this;
-    }
-
-    public String getHeader() {
-        return header;
-    }
+//    public Document setDescription(String description) {
+//        this.description = description;
+//        return this;
+//    }
+//    public String getDescription() {
+//        return description;
+//    }
+//    public Document setBody(String body) {
+//        this.body = body;
+//        return this;
+//    }
+//    public String getBody(){
+//        return body;
+//    }
+//
+//    public Document setHeader(String header) {
+//        this.header = header;
+//        return this;
+//    }
+//
+//    public String getHeader() {
+//        return header;
+//    }
 
     @Override
     public String toString() {
         return "Document{" +
                 "url='" + url + '\'' +
                 ", title='" + title + '\'' +
-                ", description='" + description + '\'' +
-                ", body='" + body + '\'' +
-                ", header='" + header + '\'' +
                 '}';
     }
 }

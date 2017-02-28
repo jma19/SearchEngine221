@@ -22,7 +22,8 @@ public class BookKeepingFileProcessor {
 
     @Autowired
     private TextProcessor textProcessor;
-    private String prefix = SysPathUtil.getSysPath() + "/WEBPAGES_RAW/";
+    private String prefix = SysPathUtil.getSysPath() + "/SearchEngine/WEBPAGES_RAW/";
+//   private String prefix = SysPathUtil.getSysPath() + "/WEBPAGES_RAW/";
 
     public void readFileIntoDocument() {
         while (bookUrlRepository.hashNext()) {
