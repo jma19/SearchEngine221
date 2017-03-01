@@ -3,10 +3,7 @@ package com.uci.indexer;
 import com.google.gson.reflect.TypeToken;
 import com.uci.io.MyFileReader;
 import com.uci.io.MyFileWriter;
-import com.uci.mode.Document;
 import com.uci.mode.IndexEntry;
-import com.uci.service.DBRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import com.uci.utils.JsonUtils;
 import com.uci.utils.SysPathUtil;
@@ -21,9 +18,8 @@ import java.util.*;
 public class Indexer {
 
     private TreeMap<String, List<IndexEntry>> indexMap = new TreeMap<>((o1, o2) -> o1.compareTo(o2));
-//    private String indexFile = SysPathUtil.getSysPath() + "/SearchEngine/conf/index.txt";
+    //    private String indexFile = SysPathUtil.getSysPath() + "/SearchEngine/conf/index.txt";
     private String indexFile = SysPathUtil.getSysPath() + "/conf/index.txt";
-
 
     /**
      * load index into memory
@@ -45,6 +41,10 @@ public class Indexer {
         } finally {
             fileReader.close();
         }
+    }
+
+    public boolean contains(String index) {
+        return indexMap.containsKey(index);
     }
 
     public List<IndexEntry> getIndexEntity(String term) {
@@ -76,7 +76,7 @@ public class Indexer {
         }
     }
 
-    public Map<String, List<Integer>> buildPosMap(List<String> tokens) {
+    private Map<String, List<Integer>> buildPosMap(List<String> tokens) {
         Map<String, List<Integer>> map = new HashMap<>();
         if (tokens == null || tokens.isEmpty()) {
             return map;
@@ -94,6 +94,7 @@ public class Indexer {
     }
 
     public void saveIndexes() {
+        System.out.println("index number: " + indexMap.size());
         MyFileWriter.createFile(indexFile);
         MyFileWriter myFileWriter = null;
         try {
@@ -102,6 +103,7 @@ public class Indexer {
                 List<IndexEntry> termPoses = indexMap.get(key);
                 String text = new StringBuffer().append(key).append(":").append(JsonUtils.toJson(termPoses)).toString();
                 myFileWriter.writeLine(text);
+                myFileWriter.flush();
             }
             myFileWriter.flush();
 
@@ -119,8 +121,19 @@ public class Indexer {
         return termPoses == null ? new ArrayList<>() : termPoses;
     }
 
-    public Map<String, Double> caculateTFIDF() {
-        return null;
+    public void calculateTFIDF() {
+        int docSize = indexMap.size();
+        Set<String> keySet = indexMap.keySet();
+        for (String key : keySet) {
+            List<IndexEntry> indexEntries = indexMap.get(key);
+            int df = indexEntries.size();
+            for (IndexEntry indexEntry : indexEntries) {
+                int tf = indexEntry.getTermFre();
+                double score = (1 + Math.log10(tf)) * Math.log10((double) docSize / df);
+                indexEntry.setTfIdf(score);
+            }
+        }
+
     }
 
 }

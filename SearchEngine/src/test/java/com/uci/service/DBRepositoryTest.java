@@ -17,13 +17,13 @@ import org.springframework.test.context.web.WebAppConfiguration;
 @WebAppConfiguration
 public class DBRepositoryTest {
     @Autowired
-    private DBRepository cacheManager;
+    private DBHandler cacheManager;
 
     @Test
     public void should_add_and_get_document() throws Exception {
         Document document = new Document().setId(1).setUrl("http://www.uci.com").setText("I want to be a tester").setTitle("This is a Test");
 //        cacheManager.put("1", document);
-        Document document1 = cacheManager.get("1", Document.class);
+        Document document1 = cacheManager.get("9166", Document.class);
         System.out.println(document1);
     }
 }

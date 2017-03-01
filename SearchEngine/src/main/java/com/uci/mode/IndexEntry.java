@@ -9,13 +9,23 @@ import java.util.List;
 public class IndexEntry {
     //document id
     private int id;
+    private double tfIdf;
     private List<Integer> pos;
+
+    public double getTfIdf() {
+        return tfIdf;
+    }
+
+    public IndexEntry setTfIdf(double tfIdf) {
+        this.tfIdf = tfIdf;
+        return this;
+    }
 
     public IndexEntry() {
         super();
     }
 
-    public int getTermFre(){
+    public int getTermFre() {
         return pos.size();
     }
 
@@ -48,6 +58,7 @@ public class IndexEntry {
     public String toString() {
         return "IndexEntry{" +
                 "id=" + id +
+                ", tfIdf=" + tfIdf +
                 ", pos=" + pos +
                 '}';
     }
