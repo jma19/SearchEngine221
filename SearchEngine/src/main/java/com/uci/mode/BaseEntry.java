@@ -2,6 +2,7 @@ package com.uci.mode;
 
 import com.uci.constant.Tag;
 
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -14,7 +15,9 @@ public class BaseEntry {
     public Tag getTag() {
         return tag;
     }
-
+    public BaseEntry(){
+        pos = new HashSet<>();
+    }
     public BaseEntry setTag(Tag name) {
         this.tag = name;
         return this;

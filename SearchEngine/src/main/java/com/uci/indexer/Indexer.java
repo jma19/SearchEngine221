@@ -1,5 +1,6 @@
 package com.uci.indexer;
 
+import com.google.common.base.Strings;
 import com.google.gson.reflect.TypeToken;
 import com.uci.constant.Tag;
 import com.uci.io.MyFileReader;
@@ -89,9 +90,12 @@ public class Indexer {
     }
 
     private void join(Map<String, Set<BaseEntry>> map1, Map<String, BaseEntry> map2) {
+        if(map2.isEmpty()){
+            return;
+        }
         for (String key : map2.keySet()) {
             Set<BaseEntry> baseEntries = map1.get(key);
-            if (baseEntries != null) {
+            if (baseEntries == null) {
                 baseEntries = new HashSet<>();
                 map1.put(key, baseEntries);
             }
@@ -100,6 +104,9 @@ public class Indexer {
     }
 
     private Map<String, BaseEntry> getEntryMap(Tag tag, String text) {
+        if(Strings.isNullOrEmpty(text)){
+           return new HashMap<>();
+        }
         List<String> tokens = getTokens(text);
         return buildPosMap(tag, tokens);
     }
