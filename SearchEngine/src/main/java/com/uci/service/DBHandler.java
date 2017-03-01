@@ -3,7 +3,6 @@ package com.uci.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.cache.RedisCache;
 import org.springframework.data.redis.core.StringRedisTemplate;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
@@ -12,11 +11,13 @@ import javax.annotation.PostConstruct;
  * Created by junm5 on 2/27/17.
  */
 @Service
-public class DBRepository {
+public class DBHandler {
 
     private static final String CACHE_NAME = "document:";
 
     private static final int EXPIRE_TIME = 0;
+
+    private static final String PKEY = "document_key";
 
     @Autowired
     private StringRedisTemplate template;
@@ -27,6 +28,7 @@ public class DBRepository {
     public void init() {
         cache = new RedisCache(CACHE_NAME, CACHE_NAME.getBytes(), template, EXPIRE_TIME);
     }
+
     // redis set <K,V>
     public void put(String key, Object obj) {
         cache.put(key, obj);
@@ -42,8 +44,15 @@ public class DBRepository {
         return cache.get(key) == null ? null :
                 cache.get(key, clas);
     }
+
     // redis del <K>
     public void del(String key) {
         cache.evict(key);
     }
+
+    public Integer getNextKey() {
+        Integer val = cache.get(PKEY, Integer.class);
+        return val == null ? 0 : val;
+    }
+
 }

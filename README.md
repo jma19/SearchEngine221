@@ -22,3 +22,7 @@ CREATE TABLE `Document` (
   KEY `ix_updated_at` (`updated_at`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8 COMMENT='Document table';
 ~~~
+
+
+1. outlinks: valid
+2. outlinks

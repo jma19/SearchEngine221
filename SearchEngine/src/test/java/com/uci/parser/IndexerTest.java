@@ -26,16 +26,10 @@ public class IndexerTest {
     private Indexer indexer;
     @Test
     public void should_load_index_into_memeory() throws Exception {
-        List<IndexEntry> termPoses = indexer.getIndexEntities("world");
-        System.out.println(termPoses);
     }
 
     @Test
     public void should_index_input_documnet() throws Exception {
-        Indexer indexer = new Indexer();
-        indexer.indexize(1, buildTestTokens());
-        indexer.indexize(2, buildTestTokens());
-        indexer.saveIndexes();
     }
 
     @Test

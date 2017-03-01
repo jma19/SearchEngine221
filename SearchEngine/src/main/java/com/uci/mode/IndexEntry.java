@@ -1,7 +1,7 @@
 package com.uci.mode;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created by junm5 on 2/22/17.
@@ -9,23 +9,43 @@ import java.util.List;
 public class IndexEntry {
     //document id
     private int id;
-    private List<Integer> pos;
+    private double tfIdf;
 
-    public IndexEntry() {
-        super();
-    }
-
-    public int getTermFre(){
-        return pos.size();
-    }
+    private Set<BaseEntry> baseEntries;
 
     public IndexEntry(int id) {
         this.id = id;
-        pos = new ArrayList();
+        baseEntries = new HashSet<>();
     }
 
-    public void addPos(Integer pos) {
-        this.pos.add(pos);
+    public int getTermFre() {
+        int fre = 0;
+        for (BaseEntry baseEntry : baseEntries) {
+            fre += baseEntry.getTermFre() * baseEntry.getTag().getWight();
+        }
+        return fre;
+    }
+
+    public Set<BaseEntry> getBaseEntries() {
+        return baseEntries;
+    }
+
+    public IndexEntry setBaseEntries(Set<BaseEntry> baseEntries) {
+        this.baseEntries = baseEntries;
+        return this;
+    }
+
+    public double getTfIdf() {
+        return tfIdf;
+    }
+
+    public IndexEntry setTfIdf(double tfIdf) {
+        this.tfIdf = tfIdf;
+        return this;
+    }
+
+    public IndexEntry() {
+        super();
     }
 
     public int getId() {
@@ -36,19 +56,28 @@ public class IndexEntry {
         this.id = id;
     }
 
-    public List<Integer> getPos() {
-        return pos;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        IndexEntry that = (IndexEntry) o;
+
+        return id == that.id;
+
     }
 
-    public void setPos(List<Integer> pos) {
-        this.pos = pos;
+    @Override
+    public int hashCode() {
+        return id;
     }
 
     @Override
     public String toString() {
         return "IndexEntry{" +
                 "id=" + id +
-                ", pos=" + pos +
+                ", tfIdf=" + tfIdf +
+                ", baseEntries=" + baseEntries +
                 '}';
     }
 }

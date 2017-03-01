@@ -1,11 +1,13 @@
 package com.uci.indexer;
 
+import com.google.common.base.Strings;
 import com.google.gson.reflect.TypeToken;
+import com.uci.constant.Tag;
 import com.uci.io.MyFileReader;
 import com.uci.io.MyFileWriter;
-import com.uci.mode.Document;
 import com.uci.mode.IndexEntry;
-import com.uci.service.DBRepository;
+import com.uci.mode.BaseEntry;
+import com.uci.mode.Document;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import com.uci.utils.JsonUtils;
@@ -20,10 +22,12 @@ import java.util.*;
 @Component
 public class Indexer {
 
-    private TreeMap<String, List<IndexEntry>> indexMap = new TreeMap<>((o1, o2) -> o1.compareTo(o2));
-//    private String indexFile = SysPathUtil.getSysPath() + "/SearchEngine/conf/index.txt";
-    private String indexFile = SysPathUtil.getSysPath() + "/conf/index.txt";
+    @Autowired
+    private TextProcessor textProcessor;
 
+    private TreeMap<String, Set<IndexEntry>> indexMap = new TreeMap<>((o1, o2) -> o1.compareTo(o2));
+    //    private String indexFile = SysPathUtil.getSysPath() + "/SearchEngine/conf/index.txt";
+    private String indexFile = SysPathUtil.getSysPath() + "/conf/index.txt";
 
     /**
      * load index into memory
@@ -37,7 +41,7 @@ public class Indexer {
             while ((line = fileReader.readLines()) != null) {
                 if (!line.isEmpty()) {
                     int splitIndex = line.indexOf(":");
-                    List<IndexEntry> termPoses = JsonUtils.fromJson(line.substring(splitIndex + 1), new TypeToken<List<IndexEntry>>() {
+                    Set<IndexEntry> termPoses = JsonUtils.fromJson(line.substring(splitIndex + 1), new TypeToken<Set<IndexEntry>>() {
                     });
                     indexMap.put(line.substring(0, splitIndex), termPoses);
                 }
@@ -47,61 +51,99 @@ public class Indexer {
         }
     }
 
-    public List<IndexEntry> getIndexEntity(String term) {
+    public boolean contains(String index) {
+        return indexMap.containsKey(index);
+    }
+
+    public Set<IndexEntry> getIndexEntity(String term) {
         return indexMap.get(term);
     }
 
-    /**
-     * {
-     * 'World': [1: [0,5,7]], [3: [2 5 9]]
-     * }
-     *
-     * @param docId
-     * @param tokens
-     */
-    public void indexize(Integer docId, List<String> tokens) {
-        Map<String, List<Integer>> posMap = buildPosMap(tokens);
-        for (String key : posMap.keySet()) {
 
-            IndexEntry termPos = new IndexEntry(docId);
-            termPos.setPos(posMap.get(key));
+    public void indexize(Document document) {
+        Map<String, BaseEntry> posTitleMap = getEntryMap(Tag.TITLE, document.getTitle());
+        Map<String, BaseEntry> posAnchorMap = getEntryMap(Tag.ANCHOR, document.getAnchorText());
+        Map<String, BaseEntry> posBodyMap = getEntryMap(Tag.BODY, document.getBody());
+        Map<String, Set<BaseEntry>> res = join(posTitleMap, posAnchorMap, posBodyMap);
 
-            List<IndexEntry> termPoseList = indexMap.get(key);
+        for (String key : res.keySet()) {
+            IndexEntry termPos = new IndexEntry(document.getId());
+            termPos.getBaseEntries().addAll(res.get(key));
+            Set<IndexEntry> termPoseList = indexMap.get(key);
             if (termPoseList == null) {
-                termPoseList = new ArrayList();
+                termPoseList = new HashSet<>();
                 indexMap.put(key, termPoseList);
             }
             termPoseList.add(termPos);
+        }
 
+    }
+
+    private Map<String, Set<BaseEntry>> join(Map<String, BaseEntry> map1,
+                                             Map<String, BaseEntry> map2,
+                                             Map<String, BaseEntry> map3) {
+        Map<String, Set<BaseEntry>> maps = new HashMap<>();
+        join(maps, map1);
+        join(maps, map2);
+        join(maps, map3);
+        return maps;
+    }
+
+    private void join(Map<String, Set<BaseEntry>> map1, Map<String, BaseEntry> map2) {
+        if(map2.isEmpty()){
+            return;
+        }
+        for (String key : map2.keySet()) {
+            Set<BaseEntry> baseEntries = map1.get(key);
+            if (baseEntries == null) {
+                baseEntries = new HashSet<>();
+                map1.put(key, baseEntries);
+            }
+            baseEntries.add(map2.get(key));
         }
     }
 
-    public Map<String, List<Integer>> buildPosMap(List<String> tokens) {
-        Map<String, List<Integer>> map = new HashMap<>();
+    private Map<String, BaseEntry> getEntryMap(Tag tag, String text) {
+        if(Strings.isNullOrEmpty(text)){
+           return new HashMap<>();
+        }
+        List<String> tokens = getTokens(text);
+        return buildPosMap(tag, tokens);
+    }
+
+    private List<String> getTokens(String title) {
+        List<String> tokens = textProcessor.getTokens(title);
+        return textProcessor.stemstop(tokens);
+    }
+
+    private static Map<String, BaseEntry> buildPosMap(Tag tag, List<String> tokens) {
+        Map<String, BaseEntry> map = new HashMap<>();
         if (tokens == null || tokens.isEmpty()) {
             return map;
         }
         for (int i = 0; i < tokens.size(); i++) {
             String key = tokens.get(i);
-            List<Integer> poses = map.get(key);
-            if (poses == null) {
-                poses = new ArrayList<>();
-                map.put(key, poses);
+            BaseEntry baseEntry = map.get(key);
+            if (baseEntry == null) {
+                baseEntry = new BaseEntry().setTag(tag);
+                map.put(key, baseEntry);
             }
-            poses.add(i);
+            baseEntry.getPos().add(i);
         }
         return map;
     }
 
     public void saveIndexes() {
+        System.out.println("index number: " + indexMap.size());
         MyFileWriter.createFile(indexFile);
         MyFileWriter myFileWriter = null;
         try {
             myFileWriter = new MyFileWriter(indexFile, true);
             for (String key : indexMap.keySet()) {
-                List<IndexEntry> termPoses = indexMap.get(key);
+                Set<IndexEntry> termPoses = indexMap.get(key);
                 String text = new StringBuffer().append(key).append(":").append(JsonUtils.toJson(termPoses)).toString();
                 myFileWriter.writeLine(text);
+                myFileWriter.flush();
             }
             myFileWriter.flush();
 
@@ -114,13 +156,24 @@ public class Indexer {
      * @param term
      * @return
      */
-    public List<IndexEntry> getIndexEntities(String term) {
-        List<IndexEntry> termPoses = indexMap.get(term);
-        return termPoses == null ? new ArrayList<>() : termPoses;
+    public Set<IndexEntry> getIndexEntities(String term) {
+        Set<IndexEntry> termPoses = indexMap.get(term);
+        return termPoses == null ? new HashSet<>() : termPoses;
     }
 
-    public Map<String, Double> caculateTFIDF() {
-        return null;
+    public void calculateTFIDF() {
+        int docSize = indexMap.size();
+        Set<String> keySet = indexMap.keySet();
+        for (String key : keySet) {
+            Set<IndexEntry> indexEntries = indexMap.get(key);
+            int df = indexEntries.size();
+            for (IndexEntry indexEntry : indexEntries) {
+                int tf = indexEntry.getTermFre();
+                double score = (1 + Math.log10(tf)) * Math.log10((double) docSize / df);
+                indexEntry.setTfIdf(score);
+            }
+        }
+
     }
 
 }
