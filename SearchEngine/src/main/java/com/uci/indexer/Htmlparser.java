@@ -75,10 +75,8 @@ public class Htmlparser {
         return new Document().setTitle(getBody(document)).setTitle(getTitle(document)).setUrl(url);
     }
 
-    public static Document generateDocument(String html, String url) {
+    public static Document generateDocument(org.jsoup.nodes.Document doc, String url) {
         try {
-            org.jsoup.nodes.Document doc = Jsoup.parse(html);
-            String text = getText(doc);
             return new Document().setTitle(getTitle(doc)).setBody(getBody(doc)).setUrl(url);
         } catch (Exception exp) {
             System.out.println(String.format("Parsing html file failed with url = %s!!!", url));
@@ -86,8 +84,8 @@ public class Htmlparser {
         }
         return null;
     }
-    //////
-    public Map<String, String> getOutgoingLinks(org.jsoup.nodes.Document doc, String url) {
+
+    public static Map<String, String> getOutgoingLinks(org.jsoup.nodes.Document doc, String url) {
         Map<String, String> outgoingLinks = new HashMap();
         Elements links = doc.select("a");
         if (links != null) {
@@ -98,10 +96,7 @@ public class Htmlparser {
 
                 String absoluteHref = combineUrls(url, href);
 
-                if (absoluteHref == null)
-                    continue;
-
-                if (!absoluteHref.contains("ics.uci.edu") || absoluteHref.contains("https"))
+                if (absoluteHref == null || !absoluteHref.contains("ics.uci.edu") || absoluteHref.contains("https"))
                     continue;
 
                 String currentAnchorText = outgoingLinks.get(absoluteHref);
@@ -111,11 +106,10 @@ public class Htmlparser {
                 outgoingLinks.put(absoluteHref, currentAnchorText.trim());
             }
         }
-
         return outgoingLinks;
     }
 
-    private String combineUrls(String url, String relativeUrl) {
+    private static String combineUrls(String url, String relativeUrl) {
         if (relativeUrl.contains("http"))
             return relativeUrl;
         try {

@@ -4,7 +4,6 @@ import com.google.common.collect.Lists;
 import com.uci.indexer.Indexer;
 import com.uci.indexer.TextProcessor;
 import com.uci.mode.Abstract;
-import com.uci.mode.Document;
 import com.uci.mode.IndexEntry;
 import com.uci.mode.Response;
 import com.uci.service.DBHandler;
