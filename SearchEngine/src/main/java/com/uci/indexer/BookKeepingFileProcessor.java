@@ -65,10 +65,7 @@ public class BookKeepingFileProcessor {
     }
 
     private void buildDocumentIndex(com.uci.mode.Document document) {
-        String input = new StringBuffer().append(document.getTitle())
-                .append("#").append(document.getText()).toString();
-        List<String> tokens = textProcessor.getTokens(input);
-        List<String> stemstop = textProcessor.stemstop(tokens);
-        indexer.indexize(document.getId(), stemstop);
+
+        indexer.indexize(document);
     }
 }

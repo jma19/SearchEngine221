@@ -79,7 +79,7 @@ public class Htmlparser {
         try {
             org.jsoup.nodes.Document doc = Jsoup.parse(html);
             String text = getText(doc);
-            return new Document().setTitle(getTitle(doc)).setText(text).setUrl(url);
+            return new Document().setTitle(getTitle(doc)).setBody(getBody(doc)).setUrl(url);
         } catch (Exception exp) {
             System.out.println(String.format("Parsing html file failed with url = %s!!!", url));
             exp.printStackTrace();

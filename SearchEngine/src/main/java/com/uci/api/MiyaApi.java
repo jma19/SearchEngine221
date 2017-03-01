@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @RestController
@@ -69,7 +70,7 @@ public class MiyaApi {
     }
 
     private List<Abstract> queryOneWord(String term) {
-        List<IndexEntry> indexEntities = indexer.getIndexEntities(term);
+        Set<IndexEntry> indexEntities = indexer.getIndexEntities(term);
         if (indexEntities == null || indexEntities.isEmpty()) {
             return new ArrayList<>();
         }
@@ -82,19 +83,19 @@ public class MiyaApi {
     }
 
     private List<Abstract> transform(List<IndexEntry> indexEntries) {
-        List<Abstract> res = new ArrayList<>();
-        for (IndexEntry indexEntry : indexEntries) {
-            int docId = indexEntry.getId();
-            Document doc = dbHandler.get(String.valueOf(docId), Document.class);
-            List<String> tokens = doc.getTokens();
-            List<Integer> pos = indexEntry.getPos();
-            int position = pos.get(0);
-            //25 words
-            res.add(new Abstract().setDesc(generateAbstract(tokens, position))
-                    .setUrl(doc.getUrl())
-                    .setTitle(doc.getTitle()));
-        }
-        return res;
+//        List<Abstract> res = new ArrayList<>();
+//        for (IndexEntry indexEntry : indexEntries) {
+//            int docId = indexEntry.getId();
+//            Document doc = dbHandler.get(String.valueOf(docId), Document.class);
+//            List<String> tokens = doc.getTokens();
+//            List<Integer> pos = indexEntry.getBaseEntries();
+//            int position = pos.get(0);
+//            //25 words
+//            res.add(new Abstract().setDesc(generateAbstract(tokens, position))
+//                    .setUrl(doc.getUrl())
+//                    .setTitle(doc.getTitle()));
+//        }
+        return null;
     }
 
     private final int HALF_LEN_OF_ABSTRACT = 25 / 2;
