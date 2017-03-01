@@ -1,11 +1,19 @@
 package com.uci.service;
 
+import com.uci.constant.Table;
+import com.uci.constant.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.cache.RedisCache;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
+import java.util.HashMap;
+import java.util.Map;
+
+import static com.uci.constant.Table.ANCHOR;
+import static com.uci.constant.Table.DOCUMENT;
+import static com.uci.constant.Table.TERM;
 
 /**
  * Created by junm5 on 2/27/17.
@@ -13,49 +21,32 @@ import javax.annotation.PostConstruct;
 @Service
 public class DBHandler {
 
-    private static final String CACHE_NAME = "document:";
-
+    private Map<Table, RedisCache> redisCacheMap = new HashMap<>();
     private static final int EXPIRE_TIME = 0;
-
-    private static final String PKEY = "document_key";
 
     @Autowired
     private StringRedisTemplate template;
 
-    private RedisCache cache;
-
     @PostConstruct
     public void init() {
-        cache = new RedisCache(CACHE_NAME, CACHE_NAME.getBytes(), template, EXPIRE_TIME);
+        redisCacheMap.put(DOCUMENT, new RedisCache(DOCUMENT.getName(), DOCUMENT.getName().getBytes(), template, EXPIRE_TIME));
+        redisCacheMap.put(TERM, new RedisCache(TERM.getName(), TERM.getName().getBytes(), template, EXPIRE_TIME));
+        redisCacheMap.put(ANCHOR, new RedisCache(ANCHOR.getName(), ANCHOR.getName().getBytes(), template, EXPIRE_TIME));
     }
 
-    // redis set <K,V>
-    public void put(String key, Object obj) {
-        cache.put(key, obj);
-    }
 
     // redis set <K,V>
-    public void put(Integer key, Object obj) {
-        cache.put(key, obj);
+    public void put(Table table, String key, Object obj) {
+        redisCacheMap.get(table).put(key, obj);
     }
 
     // redis get <K>
-    public <T> T get(String key, Class<T> clas) {
-        return cache.get(key) == null ? null :
-                cache.get(key, clas);
+    public <T> T get(Table table, String key, Class<T> clas) {
+        T t = redisCacheMap.get(table).get(key, clas);
+        return t == null ? null : t;
     }
 
-    // redis del <K>
-    public void del(String key) {
-        cache.evict(key);
-    }
-
-    public Integer getNextKey() {
-        Integer val = cache.get(PKEY, Integer.class);
-        return val == null ? 0 : val;
-    }
-
-    public void clearAll() {
-        cache.clear();
+    public void clearAll(Table table) {
+        redisCacheMap.get(redisCacheMap).clear();
     }
 }

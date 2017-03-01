@@ -1,6 +1,7 @@
 package com.uci.service;
 
 import com.uci.ServerApplication;
+import com.uci.constant.Table;
 import com.uci.mode.Document;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -21,7 +22,7 @@ public class DBRepositoryTest {
 
     @Test
     public void should_add_and_get_document() throws Exception {
-        Document document = cacheManager.get("13985", Document.class);
+        Document document = cacheManager.get(Table.DOCUMENT, "13985", Document.class);
         System.out.println(document);
 //        cacheManager.clearAll();
     }

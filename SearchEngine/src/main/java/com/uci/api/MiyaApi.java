@@ -26,9 +26,6 @@ public class MiyaApi {
     @Autowired
     private Indexer indexer;
 
-    @Autowired
-    private DBHandler dbHandler;
-
     @RequestMapping(path = "/query", method = RequestMethod.GET)
     public Response greeting(@RequestParam(value = "query", required = false) String query) {
         return Response.success(buildAbstracts());

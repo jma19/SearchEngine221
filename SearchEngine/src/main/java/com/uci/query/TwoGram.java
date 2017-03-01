@@ -35,11 +35,4 @@ public class TwoGram {
         return output;
     }
 
-    public static void main(String[] args) {
-        String in = "can I find I : it ?";
-        List<WordFreq> out = comTwoGram(in);
-        for (int i = 0; i < out.size(); i++) {
-            System.out.println(out.get(i).toString());
-        }
-    }
 }

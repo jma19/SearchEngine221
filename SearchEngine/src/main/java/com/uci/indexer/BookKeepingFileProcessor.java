@@ -1,5 +1,6 @@
 package com.uci.indexer;
 
+import com.uci.constant.Table;
 import com.uci.io.MyFileReader;
 import com.uci.mode.URLPath;
 import com.uci.service.DBHandler;
@@ -53,7 +54,7 @@ public class BookKeepingFileProcessor {
                         i++;
                         document.setId(i);
                         buildDocumentIndex(document);
-                        dbHandler.put(String.valueOf(i), document);
+                        dbHandler.put(Table.DOCUMENT, String.valueOf(i), document);
                         System.out.println("generate document index i = " + i);
                     }
                 } catch (Exception exp) {

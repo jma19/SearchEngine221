@@ -1,5 +1,6 @@
 package com.uci.indexer;
 
+import com.uci.constant.Table;
 import com.uci.io.MyFileReader;
 import com.uci.io.MyFileWriter;
 import com.uci.mode.URLPath;
@@ -52,7 +53,7 @@ public class AnchorTextProcessor {
 
     public void saveIntoRedis() {
         for (String key : archors.keySet()) {
-            dbHandler.put(ANHOR_KEY + key, getAnchorText(archors.get(key)));
+            dbHandler.put(Table.ANCHOR, key, getAnchorText(archors.get(key)));
         }
     }
 
@@ -78,7 +79,7 @@ public class AnchorTextProcessor {
     }
 
     public String getAnchorTextFromRedis(String url) {
-        return dbHandler.get(ANHOR_KEY + url, String.class);
+        return dbHandler.get(Table.ANCHOR, url, String.class);
     }
 
 
