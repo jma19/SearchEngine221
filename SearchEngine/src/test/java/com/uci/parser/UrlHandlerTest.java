@@ -31,6 +31,10 @@ public class UrlHandlerTest {
 
     @Test
     public void should_split_url() throws Exception {
-
+        String x = "123#####";
+        String str = "#####";
+        int x1 = x.indexOf(str);
+        System.out.println(x.substring(0, x1));
+        System.out.println(x.substring(x1 + str.length()));
     }
 }

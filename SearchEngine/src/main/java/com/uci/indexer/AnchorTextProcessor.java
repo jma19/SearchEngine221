@@ -22,10 +22,8 @@ public class AnchorTextProcessor {
 
     @Autowired
     private BookUrlRepository bookUrlRepository;
-
     private String prefix = SysPathUtil.getSysPath() + "/WEBPAGES_RAW/";
-    private String anchorText = SysPathUtil.getSysPath() + "/conf/anchor.txt";
-    private final String SPLITOR = "######";
+
     @Autowired
     private DBHandler dbHandler;
 
@@ -58,25 +56,6 @@ public class AnchorTextProcessor {
         }
     }
 
-    public void saveAnchorTextIntoFile() {
-        MyFileWriter.createFile(anchorText);
-        MyFileWriter myFileWriter = null;
-        try {
-            myFileWriter = new MyFileWriter(anchorText, true);
-            for (String key : archors.keySet()) {
-                Set<String> set = archors.get(key);
-                String text = new StringBuffer().append(key).append(SPLITOR).append(getAnchorText(set)).toString();
-                myFileWriter.writeLine(text);
-                myFileWriter.flush();
-                System.out.println("storing anchor text: " + key);
-            }
-            myFileWriter.flush();
-
-        } finally {
-            myFileWriter.close();
-        }
-    }
-
     public void add(String url, String text) {
         Set<String> set = archors.get(url);
         if (set == null) {
@@ -95,16 +74,34 @@ public class AnchorTextProcessor {
 
     public String getAnchorText(Set<String> set) {
         return set == null ?
-                null : set.stream().reduce((x, y) -> (x + y).replace("\n", " ")).get();
-    }
-
-    public String getAnchorText(String url) {
-        Set<String> set = archors.get(url);
-        return getAnchorText(set);
+                null : set.stream().reduce((x, y) -> (x + " " + y)).get();
     }
 
     public String getAnchorTextFromRedis(String url) {
         return dbHandler.get(ANHOR_KEY + url, String.class);
+    }
+
+
+    public void saveAnchorTextIntoFile() {
+        String anchorText = SysPathUtil.getSysPath() + "/conf/anchor.txt";
+        String SPLITOR = "######";
+
+        MyFileWriter.createFile(anchorText);
+        MyFileWriter myFileWriter = null;
+        try {
+            myFileWriter = new MyFileWriter(anchorText, true);
+            for (String key : archors.keySet()) {
+                Set<String> set = archors.get(key);
+                String text = new StringBuffer().append(key).append(SPLITOR).append(getAnchorText(set)).toString();
+                myFileWriter.writeLine(text);
+                myFileWriter.flush();
+                System.out.println("storing anchor text: " + key);
+            }
+            myFileWriter.flush();
+
+        } finally {
+            myFileWriter.close();
+        }
     }
 
 
