@@ -25,7 +25,7 @@ public class Indexer {
     @Autowired
     private TextProcessor textProcessor;
 
-    private TreeMap<String, Set<IndexEntry>> indexMap = new TreeMap<>((o1, o2) -> o1.compareTo(o2));
+    private TreeMap<String, List<IndexEntry>> indexMap = new TreeMap<>((o1, o2) -> o1.compareTo(o2));
     //    private String indexFile = SysPathUtil.getSysPath() + "/SearchEngine/conf/index.txt";
     private String indexFile = SysPathUtil.getSysPath() + "/conf/index.txt";
 
@@ -41,7 +41,8 @@ public class Indexer {
             while ((line = fileReader.readLines()) != null) {
                 if (!line.isEmpty()) {
                     int splitIndex = line.indexOf(":");
-                    Set<IndexEntry> termPoses = JsonUtils.fromJson(line.substring(splitIndex + 1), new TypeToken<Set<IndexEntry>>() {});
+                    List<IndexEntry> termPoses = JsonUtils.fromJson(line.substring(splitIndex + 1), new TypeToken<List<IndexEntry>>() {
+                    });
                     indexMap.put(line.substring(0, splitIndex), termPoses);
                 }
             }
@@ -54,7 +55,7 @@ public class Indexer {
         return indexMap.containsKey(index);
     }
 
-    public Set<IndexEntry> getIndexEntity(String term) {
+    public List<IndexEntry> getIndexEntity(String term) {
         return indexMap.get(term);
     }
 
@@ -68,9 +69,9 @@ public class Indexer {
         for (String key : res.keySet()) {
             IndexEntry termPos = new IndexEntry(document.getId());
             termPos.getBaseEntries().addAll(res.get(key));
-            Set<IndexEntry> termPoseList = indexMap.get(key);
+            List<IndexEntry> termPoseList = indexMap.get(key);
             if (termPoseList == null) {
-                termPoseList = new HashSet<>();
+                termPoseList = new ArrayList<>();
                 indexMap.put(key, termPoseList);
             }
             termPoseList.add(termPos);
@@ -89,7 +90,7 @@ public class Indexer {
     }
 
     private void join(Map<String, Set<BaseEntry>> map1, Map<String, BaseEntry> map2) {
-        if(map2.isEmpty()){
+        if (map2.isEmpty()) {
             return;
         }
         for (String key : map2.keySet()) {
@@ -103,8 +104,8 @@ public class Indexer {
     }
 
     private Map<String, BaseEntry> getEntryMap(Tag tag, String text) {
-        if(Strings.isNullOrEmpty(text)){
-           return new HashMap<>();
+        if (Strings.isNullOrEmpty(text)) {
+            return new HashMap<>();
         }
         List<String> tokens = getTokens(text);
         return buildPosMap(tag, tokens);
@@ -115,7 +116,7 @@ public class Indexer {
         return textProcessor.stemstop(tokens);
     }
 
-    private static Map<String, BaseEntry> buildPosMap(Tag tag, List<String> tokens) {
+    private Map<String, BaseEntry> buildPosMap(Tag tag, List<String> tokens) {
         Map<String, BaseEntry> map = new HashMap<>();
         if (tokens == null || tokens.isEmpty()) {
             return map;
@@ -139,7 +140,7 @@ public class Indexer {
         try {
             myFileWriter = new MyFileWriter(indexFile, true);
             for (String key : indexMap.keySet()) {
-                Set<IndexEntry> termPoses = indexMap.get(key);
+                List<IndexEntry> termPoses = indexMap.get(key);
                 String text = new StringBuffer().append(key).append(":").append(JsonUtils.toJson(termPoses)).toString();
                 myFileWriter.writeLine(text);
                 myFileWriter.flush();
@@ -156,16 +157,16 @@ public class Indexer {
      * @param term
      * @return
      */
-    public Set<IndexEntry> getIndexEntities(String term) {
-        Set<IndexEntry> termPoses = indexMap.get(term);
-        return termPoses == null ? new HashSet<>() : termPoses;
+    public List<IndexEntry> getIndexEntities(String term) {
+        List<IndexEntry> termPoses = indexMap.get(term);
+        return termPoses == null ? new ArrayList<>() : termPoses;
     }
 
     public void calculateTFIDF() {
         int docSize = indexMap.size();
         Set<String> keySet = indexMap.keySet();
         for (String key : keySet) {
-            Set<IndexEntry> indexEntries = indexMap.get(key);
+            List<IndexEntry> indexEntries = indexMap.get(key);
             int df = indexEntries.size();
             for (IndexEntry indexEntry : indexEntries) {
                 int tf = indexEntry.getTermFre();

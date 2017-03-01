@@ -2,7 +2,9 @@ package com.uci.mode;
 
 import com.uci.constant.Tag;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -10,13 +12,13 @@ import java.util.Set;
  */
 public class BaseEntry {
     private Tag tag;
-    private Set<Integer> pos;
+    private List<Integer> pos;
 
     public Tag getTag() {
         return tag;
     }
     public BaseEntry(){
-        pos = new HashSet<>();
+        pos = new ArrayList<>();
     }
     public BaseEntry setTag(Tag name) {
         this.tag = name;
@@ -27,29 +29,13 @@ public class BaseEntry {
         return pos.size();
     }
 
-    public Set<Integer> getPos() {
+    public List<Integer> getPos() {
         return pos;
     }
 
-    public BaseEntry setPos(Set<Integer> pos) {
+    public BaseEntry setPos(List<Integer> pos) {
         this.pos = pos;
         return this;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        BaseEntry baseEntry = (BaseEntry) o;
-
-        return tag != null ? tag.equals(baseEntry.tag) : baseEntry.tag == null;
-
-    }
-
-    @Override
-    public int hashCode() {
-        return tag != null ? tag.hashCode() : 0;
     }
 
     @Override

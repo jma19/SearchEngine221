@@ -69,7 +69,7 @@ public class MiyaApi {
     }
 
     private List<Abstract> queryOneWord(String term) {
-        Set<IndexEntry> indexEntities = indexer.getIndexEntities(term);
+        List<IndexEntry> indexEntities = indexer.getIndexEntities(term);
         if (indexEntities == null || indexEntities.isEmpty()) {
             return new ArrayList<>();
         }

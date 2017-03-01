@@ -43,14 +43,12 @@ public class BookKeepingFileProcessor {
             URLPath urlPath = bookUrlRepository.next();
             String path = prefix + urlPath.getPath();
             MyFileReader myFileReader = new MyFileReader(path);
-
             String html = myFileReader.readAll();
             if (html != null && !html.isEmpty()) {
                 try {
                     Document doc = Jsoup.parse(html);
                     anchorTextProcessor.add(doc, urlPath.getUrl());
                     com.uci.mode.Document document = Htmlparser.generateDocument(doc, urlPath.getUrl());
-
                     if (document != null) {
                         i++;
                         document.setId(i);

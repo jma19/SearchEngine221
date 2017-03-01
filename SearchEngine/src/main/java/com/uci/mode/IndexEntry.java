@@ -1,6 +1,7 @@
 package com.uci.mode;
 
-import java.util.HashSet;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -11,11 +12,11 @@ public class IndexEntry {
     private int id;
     private double tfIdf;
 
-    private Set<BaseEntry> baseEntries;
+    private List<BaseEntry> baseEntries;
 
     public IndexEntry(int id) {
         this.id = id;
-        baseEntries = new HashSet<>();
+        baseEntries = new ArrayList<>();
     }
 
     public int getTermFre() {
@@ -26,13 +27,12 @@ public class IndexEntry {
         return fre;
     }
 
-    public Set<BaseEntry> getBaseEntries() {
+    public List<BaseEntry> getBaseEntries() {
         return baseEntries;
     }
 
-    public IndexEntry setBaseEntries(Set<BaseEntry> baseEntries) {
+    public void setBaseEntries(List<BaseEntry> baseEntries) {
         this.baseEntries = baseEntries;
-        return this;
     }
 
     public double getTfIdf() {
@@ -54,22 +54,6 @@ public class IndexEntry {
 
     public void setId(int id) {
         this.id = id;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        IndexEntry that = (IndexEntry) o;
-
-        return id == that.id;
-
-    }
-
-    @Override
-    public int hashCode() {
-        return id;
     }
 
     @Override
