@@ -21,5 +21,8 @@ public class DBRepositoryTest {
 
     @Test
     public void should_add_and_get_document() throws Exception {
+        Document document = cacheManager.get("13985", Document.class);
+        System.out.println(document);
+//        cacheManager.clearAll();
     }
 }

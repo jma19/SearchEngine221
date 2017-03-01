@@ -55,4 +55,7 @@ public class DBHandler {
         return val == null ? 0 : val;
     }
 
+    public void clearAll() {
+        cache.clear();
+    }
 }

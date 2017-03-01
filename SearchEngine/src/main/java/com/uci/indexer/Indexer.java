@@ -41,8 +41,7 @@ public class Indexer {
             while ((line = fileReader.readLines()) != null) {
                 if (!line.isEmpty()) {
                     int splitIndex = line.indexOf(":");
-                    Set<IndexEntry> termPoses = JsonUtils.fromJson(line.substring(splitIndex + 1), new TypeToken<Set<IndexEntry>>() {
-                    });
+                    Set<IndexEntry> termPoses = JsonUtils.fromJson(line.substring(splitIndex + 1), new TypeToken<Set<IndexEntry>>() {});
                     indexMap.put(line.substring(0, splitIndex), termPoses);
                 }
             }
@@ -144,6 +143,7 @@ public class Indexer {
                 String text = new StringBuffer().append(key).append(":").append(JsonUtils.toJson(termPoses)).toString();
                 myFileWriter.writeLine(text);
                 myFileWriter.flush();
+                System.out.println("storing term : " + key);
             }
             myFileWriter.flush();
 

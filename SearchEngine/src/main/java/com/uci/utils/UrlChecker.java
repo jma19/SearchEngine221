@@ -24,7 +24,7 @@ public class UrlChecker {
                     + "|3gp|amr|au|vox|rar|aac|ace|alz|apk|arc"
                     + "|arj|lzip|lha|txt|java|javac|cc|h|pfm|" +
                     "|war|au|apk|db|z|java|c|py|lif|pov|bib|shar" +
-                    "|txt|hs|lif|pl|jpg|r|out|.ss|pde|json|fasta|ppsx|cpp|cp|tst)" + "(\\?.*)?$");
+                    "|txt|hs|lif|pl|jpg|r|out|.ss|pde|json|fasta|ppsx|cpp|cp|tst|raw)" + "(\\?.*)?$");
 
 
     // skip URLs containing certain characters as probable queries, etc.

@@ -33,8 +33,6 @@ public class TwoGram {
             }
         });
         return output;
-
-
     }
 
     public static void main(String[] args) {
