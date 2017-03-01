@@ -10,6 +10,9 @@ public class JsonUtils {
     private final static Gson gson = new Gson();
 
     public static String toJson(Object obj) {
+        if (obj == null) {
+            return "";
+        }
         return gson.toJson(obj);
     }
 

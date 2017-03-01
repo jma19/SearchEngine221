@@ -103,7 +103,7 @@ public class Htmlparser {
                 String currentAnchorText = outgoingLinks.get(absoluteHref);
                 if (currentAnchorText == null)
                     currentAnchorText = "";
-                currentAnchorText += " " + link.text();
+                currentAnchorText += link.text();
                 outgoingLinks.put(absoluteHref, currentAnchorText.trim());
             }
         }

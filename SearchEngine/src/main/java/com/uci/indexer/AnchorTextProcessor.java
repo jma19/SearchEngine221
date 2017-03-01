@@ -3,7 +3,7 @@ package com.uci.indexer;
 import com.uci.io.MyFileReader;
 import com.uci.io.MyFileWriter;
 import com.uci.mode.URLPath;
-import com.uci.utils.JsonUtils;
+import com.uci.service.DBHandler;
 import com.uci.utils.SysPathUtil;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -25,6 +25,11 @@ public class AnchorTextProcessor {
 
     private String prefix = SysPathUtil.getSysPath() + "/WEBPAGES_RAW/";
     private String anchorText = SysPathUtil.getSysPath() + "/conf/anchor.txt";
+    private final String SPLITOR = "######";
+    @Autowired
+    private DBHandler dbHandler;
+
+    private final String ANHOR_KEY = "ANCHOR";
 
     public void parseAnchorTextFromFile() {
         List<URLPath> urlPaths = bookUrlRepository.getURLPaths();
@@ -47,6 +52,12 @@ public class AnchorTextProcessor {
         }
     }
 
+    public void saveIntoRedis() {
+        for (String key : archors.keySet()) {
+            dbHandler.put(ANHOR_KEY + key, getAnchorText(archors.get(key)));
+        }
+    }
+
     public void saveAnchorTextIntoFile() {
         MyFileWriter.createFile(anchorText);
         MyFileWriter myFileWriter = null;
@@ -54,7 +65,7 @@ public class AnchorTextProcessor {
             myFileWriter = new MyFileWriter(anchorText, true);
             for (String key : archors.keySet()) {
                 Set<String> set = archors.get(key);
-                String text = new StringBuffer().append(key).append(":").append(JsonUtils.toJson(set)).toString();
+                String text = new StringBuffer().append(key).append(SPLITOR).append(getAnchorText(set)).toString();
                 myFileWriter.writeLine(text);
                 myFileWriter.flush();
                 System.out.println("storing anchor text: " + key);
@@ -82,10 +93,19 @@ public class AnchorTextProcessor {
         }
     }
 
+    public String getAnchorText(Set<String> set) {
+        return set == null ?
+                null : set.stream().reduce((x, y) -> (x + y).replace("\n", " ")).get();
+    }
+
     public String getAnchorText(String url) {
         Set<String> set = archors.get(url);
-        return set == null ?
-                null : set.stream().reduce((x, y) -> x + y).get();
+        return getAnchorText(set);
     }
+
+    public String getAnchorTextFromRedis(String url) {
+        return dbHandler.get(ANHOR_KEY + url, String.class);
+    }
+
 
 }
