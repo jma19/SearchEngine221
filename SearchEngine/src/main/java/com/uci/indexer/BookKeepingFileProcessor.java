@@ -53,7 +53,7 @@ public class BookKeepingFileProcessor {
                         i++;
                         document.setId(i);
                         buildDocumentIndex(document);
-//                        dbHandler.put(String.valueOf(i), document);
+                        dbHandler.put(String.valueOf(i), document);
                         System.out.println("generate document index i = " + i);
                     }
                 } catch (Exception exp) {

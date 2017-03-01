@@ -1,12 +1,16 @@
 package com.uci.indexer;
 
+import com.uci.io.MyFileReader;
+import com.uci.io.MyFileWriter;
+import com.uci.mode.URLPath;
+import com.uci.utils.JsonUtils;
+import com.uci.utils.SysPathUtil;
+import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Created by junm5 on 3/1/17.
@@ -16,6 +20,51 @@ public class AnchorTextProcessor {
 
     private Map<String, Set<String>> archors = new HashMap<>();
 
+    @Autowired
+    private BookUrlRepository bookUrlRepository;
+
+    private String prefix = SysPathUtil.getSysPath() + "/WEBPAGES_RAW/";
+    private String anchorText = SysPathUtil.getSysPath() + "/conf/anchor.txt";
+
+    public void parseAnchorTextFromFile() {
+        List<URLPath> urlPaths = bookUrlRepository.getURLPaths();
+        for (URLPath urlPath : urlPaths) {
+            String path = prefix + urlPath.getPath();
+            MyFileReader myFileReader = new MyFileReader(path);
+            String html = myFileReader.readAll();
+            if (html != null && !html.isEmpty()) {
+                try {
+                    Document doc = Jsoup.parse(html);
+                    add(doc, urlPath.getUrl());
+                } catch (Exception exp) {
+                    System.out.println("parsing failed: " + path);
+                    exp.printStackTrace();
+                } finally {
+                    myFileReader.close();
+                }
+
+            }
+        }
+    }
+
+    public void saveAnchorTextIntoFile() {
+        MyFileWriter.createFile(anchorText);
+        MyFileWriter myFileWriter = null;
+        try {
+            myFileWriter = new MyFileWriter(anchorText, true);
+            for (String key : archors.keySet()) {
+                Set<String> set = archors.get(key);
+                String text = new StringBuffer().append(key).append(":").append(JsonUtils.toJson(set)).toString();
+                myFileWriter.writeLine(text);
+                myFileWriter.flush();
+                System.out.println("storing anchor text: " + key);
+            }
+            myFileWriter.flush();
+
+        } finally {
+            myFileWriter.close();
+        }
+    }
 
     public void add(String url, String text) {
         Set<String> set = archors.get(url);

@@ -1,6 +1,7 @@
 package com.uci.indexer;//package com.uci.parser;
 
 import com.uci.mode.Document;
+import com.uci.utils.UrlChecker;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
@@ -95,9 +96,9 @@ public class Htmlparser {
                     continue;
 
                 String absoluteHref = combineUrls(url, href);
-
-                if (absoluteHref == null || !absoluteHref.contains("ics.uci.edu") || absoluteHref.contains("https"))
+                if(!UrlChecker.isValid(absoluteHref)){
                     continue;
+                }
 
                 String currentAnchorText = outgoingLinks.get(absoluteHref);
                 if (currentAnchorText == null)
