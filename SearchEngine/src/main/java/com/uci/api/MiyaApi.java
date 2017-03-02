@@ -30,10 +30,11 @@ public class MiyaApi {
     @RequestMapping(path = "/query", method = RequestMethod.GET)
     public Response greeting(@RequestParam(value = "query", required = false) String query) {
         System.out.println(String.format("receive data : % s", query));
-        return Response.success(buildAbstracts());
+        List<Abstract> abstractList = getAbstractList(query);
+        return Response.success(abstractList);
     }
 
-    private List<Abstract> buildAbstracts() {
+    private List<Abstract> buildAbstractsTest() {
         List<Abstract> abstracts = Lists.newArrayList();
         abstracts.add(new Abstract().setUrl("https://www.ics.uci.edu/faculty/area/").setTitle("ICS Research Areas").setDesc("Curiosity about the world and a commitment to solving problems are the passions that drive ICS faculty. Their research in the information and computer sciences are applicable to many scholarly and scientific fields. But our faculty don't do it alone, students work side-by-side with nationally renowned professors to advance knowledge and improve lives. Below is a"));
         abstracts.add(new Abstract().setUrl("https://www.ics.uci.edu/faculty/area/").setTitle("ICS Research Areas").setDesc("Curiosity about the world and a commitment to solving problems are the passions that drive ICS faculty. Their research in the information and computer sciences are applicable to many scholarly and scientific fields. But our faculty don't do it alone, students work side-by-side with nationally renowned professors to advance knowledge and improve lives. Below is a"));
@@ -60,7 +61,8 @@ public class MiyaApi {
         if (queryFin.size() == 1) {
             return queryOneWord(queryFin.get(0));
 
-        } else if (queryFin.size() >= 2) {
+        }
+        else if (queryFin.size() >= 2) {
             return queryMultiWords(queryFin);
         }
         return new ArrayList<>();
