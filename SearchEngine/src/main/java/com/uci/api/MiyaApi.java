@@ -118,7 +118,7 @@ public class MiyaApi {
             double[] docV = docMap.get(docId);
             normalize(docV);
             double dot = dot(query, docV);
-            list.add(new Pair(docId, docId));
+            list.add(new Pair(docId, dot));
         }
         List<Pair> pairs = list.stream().sorted().collect(Collectors.toList());
 
