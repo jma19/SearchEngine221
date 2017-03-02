@@ -1,11 +1,10 @@
 package com.uci.api;
 
 import com.google.common.collect.Lists;
+import com.uci.constant.Table;
 import com.uci.indexer.Indexer;
 import com.uci.indexer.TextProcessor;
-import com.uci.mode.Abstract;
-import com.uci.mode.IndexEntry;
-import com.uci.mode.Response;
+import com.uci.mode.*;
 import com.uci.service.DBHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -13,8 +12,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @RestController
@@ -25,6 +23,9 @@ public class MiyaApi {
 
     @Autowired
     private Indexer indexer;
+
+    @Autowired
+    private DBHandler dbHandler;
 
     @RequestMapping(path = "/query", method = RequestMethod.GET)
     public Response greeting(@RequestParam(value = "query", required = false) String query) {
@@ -78,21 +79,68 @@ public class MiyaApi {
     }
 
     private List<Abstract> transform(List<IndexEntry> indexEntries) {
-//        List<Abstract> res = new ArrayList<>();
-//        for (IndexEntry indexEntry : indexEntries) {
-//            int docId = indexEntry.getId();
-//            Document doc = dbHandler.get(String.valueOf(docId), Document.class);
-//            List<String> tokens = doc.getTokens();
-//            List<Integer> pos = indexEntry.getPos();
-//            int position = pos.get(0);
-//            //25 words
-//            res.add(new Abstract().setDesc(generateAbstract(tokens, position))
-//                    .setUrl(doc.getUrl())
-//                    .setTitle(doc.getTitle()));
-//        }
+        List<Abstract> res = new ArrayList<>();
+        for (IndexEntry indexEntry : indexEntries) {
+            int docId = indexEntry.getId();
+            Document doc = dbHandler.get(Table.DOCUMENT, String.valueOf(docId), Document.class);
+            res.add(new Abstract().setDesc(doc.getBody().substring(0, 200))
+                    .setUrl(doc.getUrl())
+                    .setTitle(doc.getTitle()));
+        }
+        return res;
+    }
+
+    private List<Abstract> queryMultiWords(List<String> terms) {
+        Map<String, Integer> freMap = textProcessor.buildFreMap(terms);
+
+        int size = freMap.size();
+        double[] query = new double[size];
+        Map<Integer, double[]> docMap = new HashMap<>();
+        int index = 0;
+        for (String key : freMap.keySet()) {
+            query[index] = indexer.getIDF(key) * (1 + Math.log10(freMap.get(key)));
+            List<IndexEntry> indexEntities = indexer.getIndexEntities(key);
+            for (IndexEntry entry : indexEntities) {
+                double[] temp = docMap.get(entry.getId());
+                if (temp == null) {
+                    temp = new double[size];
+                    docMap.put(entry.getId(), temp);
+                }
+                temp[index] = entry.getTfIdf();
+            }
+            index++;
+        }
+        normalize(query);
+        //store final sim value for each document
+        List<Pair> list = new ArrayList<>();
+        for (Integer docId : docMap.keySet()) {
+            double[] docV = docMap.get(docId);
+
+        }
         return null;
     }
 
+    private double dot(double[] v1, double[] v2) {
+        if (v1.length != v2.length) {
+            throw new ArithmeticException("v1.length is not equal to v2.length");
+        }
+        double sum = 0;
+        for (int i = 0; i < v1.length; i++) {
+            sum += v1[i] * v2[i];
+        }
+        return sum;
+    }
+
+    private void normalize(double[] vector) {
+        double sum = 0;
+        for (int i = 0; i < vector.length; i++) {
+            sum += Math.pow(vector[i], 2);
+        }
+        sum = Math.sqrt(sum);
+        for (int i = 0; i < vector.length; i++) {
+            vector[i] /= sum;
+        }
+    }
 
     private final int HALF_LEN_OF_ABSTRACT = 25 / 2;
 
@@ -110,10 +158,5 @@ public class MiyaApi {
         }
         stringBuffer.append("........");
         return stringBuffer.toString();
-    }
-
-    private List<Abstract> queryMultiWords(List<String> terms) {
-
-        return null;
     }
 }

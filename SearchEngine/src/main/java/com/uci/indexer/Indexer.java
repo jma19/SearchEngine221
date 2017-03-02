@@ -2,12 +2,15 @@ package com.uci.indexer;
 
 import com.google.common.base.Strings;
 import com.google.gson.reflect.TypeToken;
+import com.uci.constant.Constant;
+import com.uci.constant.Table;
 import com.uci.constant.Tag;
 import com.uci.io.MyFileReader;
 import com.uci.io.MyFileWriter;
 import com.uci.mode.IndexEntry;
 import com.uci.mode.BaseEntry;
 import com.uci.mode.Document;
+import com.uci.service.DBHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import com.uci.utils.JsonUtils;
@@ -28,12 +31,16 @@ public class Indexer {
     private TreeMap<String, List<IndexEntry>> indexMap = new TreeMap<>((o1, o2) -> o1.compareTo(o2));
     //    private String indexFile = SysPathUtil.getSysPath() + "/SearchEngine/conf/index.txt";
     private String indexFile = SysPathUtil.getSysPath() + "/conf/index.txt";
+    private Integer docSize;
+    @Autowired
+    private DBHandler dbHandler;
 
     /**
      * load index into memory
      */
     @PostConstruct
     public void loadIndexes() {
+        docSize = dbHandler.get(Table.DOCUMENT, Constant.SIZE, Integer.class);
         MyFileReader fileReader = null;
         try {
             fileReader = new MyFileReader(indexFile);
@@ -163,7 +170,6 @@ public class Indexer {
     }
 
     public void calculateTFIDF() {
-        int docSize = indexMap.size();
         Set<String> keySet = indexMap.keySet();
         for (String key : keySet) {
             List<IndexEntry> indexEntries = indexMap.get(key);
@@ -174,7 +180,10 @@ public class Indexer {
                 indexEntry.setTfIdf(score);
             }
         }
-
     }
 
+    public double getIDF(String term) {
+        List<IndexEntry> indexEntries = indexMap.get(term);
+        return Math.log10((double) docSize / indexEntries.size());
+    }
 }

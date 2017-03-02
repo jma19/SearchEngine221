@@ -1,5 +1,6 @@
 package com.uci.indexer;
 
+import com.uci.constant.Constant;
 import com.uci.constant.Table;
 import com.uci.io.MyFileReader;
 import com.uci.mode.URLPath;
@@ -29,7 +30,6 @@ public class BookKeepingFileProcessor {
     @Autowired
     private DBHandler dbHandler;
 
-
     @Autowired
     private AnchorTextProcessor anchorTextProcessor;
 
@@ -52,7 +52,7 @@ public class BookKeepingFileProcessor {
                     com.uci.mode.Document document = Htmlparser.generateDocument(doc, urlPath.getUrl());
                     if (document != null) {
                         i++;
-                        document.setId(i);
+                        document.setId(i).setAnchorText(dbHandler.get(Table.ANCHOR, urlPath.getUrl(), String.class));
                         buildDocumentIndex(document);
                         dbHandler.put(Table.DOCUMENT, String.valueOf(i), document);
                         System.out.println("generate document index i = " + i);
@@ -65,6 +65,7 @@ public class BookKeepingFileProcessor {
                 }
             }
         }
+        dbHandler.put(Table.DOCUMENT, Constant.SIZE, i);
         System.out.println("saving indexing.....");
         indexer.calculateTFIDF();
         indexer.saveIndexes();
