@@ -34,6 +34,7 @@ public class AnchorTextProcessorTest {
         System.out.println(anchorText);
     }
 
+
     @Test
     public void clear_all_anchor_text() throws Exception {
 
