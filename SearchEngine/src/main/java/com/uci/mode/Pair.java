@@ -9,6 +9,15 @@ public class Pair implements Comparable<Pair> {
     private int id;
     private double score;
 
+    public Pair() {
+        super();
+    }
+
+    public Pair(int id, double score) {
+        this.id = id;
+        this.score = score;
+    }
+
     public int getId() {
         return id;
     }

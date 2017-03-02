@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.*;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 @RestController
@@ -115,9 +116,17 @@ public class MiyaApi {
         List<Pair> list = new ArrayList<>();
         for (Integer docId : docMap.keySet()) {
             double[] docV = docMap.get(docId);
-
+            normalize(docV);
+            double dot = dot(query, docV);
+            list.add(new Pair(docId, docId));
         }
-        return null;
+        List<Pair> pairs = list.stream().sorted().collect(Collectors.toList());
+
+        return ;
+    }
+    private void transform(List<Pair> pairs){
+        for(List ){
+        }
     }
 
     private double dot(double[] v1, double[] v2) {
