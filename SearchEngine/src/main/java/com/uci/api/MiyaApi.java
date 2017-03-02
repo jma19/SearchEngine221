@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.*;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 @RestController
@@ -30,6 +29,7 @@ public class MiyaApi {
 
     @RequestMapping(path = "/query", method = RequestMethod.GET)
     public Response greeting(@RequestParam(value = "query", required = false) String query) {
+        System.out.println(String.format("receive data : % s", query));
         return Response.success(buildAbstracts());
     }
 
@@ -76,10 +76,10 @@ public class MiyaApi {
                 .sorted((o1, o2) -> o2.getTermFre() - o1.getTermFre())
                 .limit(10).collect(Collectors.toList());
 
-        return transform(tempRes);
+        return getAbstractsByIndexEntry(tempRes);
     }
 
-    private List<Abstract> transform(List<IndexEntry> indexEntries) {
+    private List<Abstract> getAbstractsByIndexEntry(List<IndexEntry> indexEntries) {
         List<Abstract> res = new ArrayList<>();
         for (IndexEntry indexEntry : indexEntries) {
             int docId = indexEntry.getId();
@@ -122,11 +122,19 @@ public class MiyaApi {
         }
         List<Pair> pairs = list.stream().sorted().collect(Collectors.toList());
 
-        return ;
+        return getAbstractsByPairs(pairs);
     }
-    private void transform(List<Pair> pairs){
-        for(List ){
+
+    private List<Abstract> getAbstractsByPairs(List<Pair> pairs) {
+        List<Abstract> res = new ArrayList<>();
+        for (Pair pair : pairs) {
+            Document document = dbHandler.get(Table.DOCUMENT, String.valueOf(pair.getId()), Document.class);
+            res.add(new Abstract()
+                    .setDesc(document.getBody().substring(0, 200))
+                    .setTitle(document.getTitle())
+                    .setUrl(document.getUrl()));
         }
+        return res;
     }
 
     private double dot(double[] v1, double[] v2) {

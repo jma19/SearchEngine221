@@ -36,6 +36,6 @@ public class Pair implements Comparable<Pair> {
 
     @Override
     public int compareTo(Pair o) {
-        return (this.score - o.score) == 0 ? 0 : (this.score > o.score ? 1 : -1);
+        return (this.score - o.score) == 0 ? 0 : (this.score < o.score ? 1 : -1);
     }
 }
