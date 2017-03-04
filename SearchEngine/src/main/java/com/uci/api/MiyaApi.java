@@ -7,10 +7,7 @@ import com.uci.constant.Table;
 import com.uci.mode.*;
 import com.uci.service.DBHandler;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -27,9 +24,9 @@ public class MiyaApi {
 //    @Autowired
 //    private DBHandler dbHandler;
 
-    @RequestMapping(path = "/query", method = RequestMethod.GET)
-    public Response greeting(@RequestParam(value = "query", required = false) String query) {
-        System.out.println(String.format("receive data : % s", query));
+    @RequestMapping(path = "/query/{query}", method = RequestMethod.GET)
+    public Response query(@PathVariable String query) {
+        System.out.println("receiving :" + query);
         List<Abstract> abstractList = buildAbstractsTest();
         return Response.success(abstractList);
     }
