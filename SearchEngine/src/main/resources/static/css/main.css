@@ -1,0 +1,15 @@
+.form-table  {
+    border: 0px;
+     height: 50px;
+    width: 650px;
+    align: left;
+}
+
+.form-table img {
+    height: 10%;
+}
+
+.search-button {
+    width:65px;
+    height: 65px;
+}

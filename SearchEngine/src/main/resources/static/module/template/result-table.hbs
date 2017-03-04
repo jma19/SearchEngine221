@@ -1,0 +1,17 @@
+<div class="col-md-offset-1 col-md-8">
+    {{#if records}}
+        {{#each records}}
+            <article>
+                <a href="{{this.url}}"><h4>{{this.title}}</h4></a>
+                <p>{{this.desc}}</p>
+                <a href="{{this.url}}">{{this.url}}</a>
+            </article>
+        {{/each}}
+    {{else}}
+        {{#if error}}
+            <h4>error</h4>
+        {{else}}
+            <h4>No records</h4>
+        {{/if}}
+    {{/if}}
+</div>
