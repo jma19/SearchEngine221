@@ -8,7 +8,10 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * Created by junm5 on 2/28/17.
+ * Created by junm5 on 2/28
+ *
+ *
+ * gi/17.
  */
 public class BaseEntry {
     private Tag tag;
