@@ -4,7 +4,7 @@ import com.uci.constant.Table;
 import com.uci.io.MyFileReader;
 import com.uci.io.MyFileWriter;
 import com.uci.mode.URLPath;
-import com.uci.service.DBHandler;
+import com.uci.db.DBHandler;
 import com.uci.utils.SysPathUtil;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;

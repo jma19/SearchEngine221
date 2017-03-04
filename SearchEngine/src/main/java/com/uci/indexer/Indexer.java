@@ -10,7 +10,7 @@ import com.uci.io.MyFileWriter;
 import com.uci.mode.IndexEntry;
 import com.uci.mode.BaseEntry;
 import com.uci.mode.Document;
-import com.uci.service.DBHandler;
+import com.uci.db.DBHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import com.uci.utils.JsonUtils;
@@ -29,8 +29,8 @@ public class Indexer {
     private TextProcessor textProcessor;
 
     private TreeMap<String, List<IndexEntry>> indexMap = new TreeMap<>((o1, o2) -> o1.compareTo(o2));
-    //    private String indexFile = SysPathUtil.getSysPath() + "/SearchEngine/conf/index.txt";
-    private String indexFile = SysPathUtil.getSysPath() + "/conf/index.txt";
+        private String indexFile = SysPathUtil.getSysPath() + "/SearchEngine/conf/index.txt";
+//    private String indexFile = SysPathUtil.getSysPath() + "/conf/index.txt";
     private Integer docSize;
     @Autowired
     private DBHandler dbHandler;

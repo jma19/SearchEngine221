@@ -5,7 +5,7 @@ import com.uci.constant.Table;
 import com.uci.indexer.Indexer;
 import com.uci.indexer.TextProcessor;
 import com.uci.mode.*;
-import com.uci.service.DBHandler;
+import com.uci.db.DBHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;

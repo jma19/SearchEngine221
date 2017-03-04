@@ -4,7 +4,7 @@ import com.uci.constant.Constant;
 import com.uci.constant.Table;
 import com.uci.io.MyFileReader;
 import com.uci.mode.URLPath;
-import com.uci.service.DBHandler;
+import com.uci.db.DBHandler;
 import com.uci.utils.SysPathUtil;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -35,8 +35,8 @@ public class BookKeepingFileProcessor {
 
     private int i = 0;
 
-    //    private String prefix = SysPathUtil.getSysPath() + "/SearchEngine/WEBPAGES_RAW/";
-    private String prefix = SysPathUtil.getSysPath() + "/WEBPAGES_RAW/";
+        private String prefix = SysPathUtil.getSysPath() + "/SearchEngine/WEBPAGES_RAW/";
+//    private String prefix = SysPathUtil.getSysPath() + "/WEBPAGES_RAW/";
 
     //1 - 18660
     public void readFileIntoDocument() {

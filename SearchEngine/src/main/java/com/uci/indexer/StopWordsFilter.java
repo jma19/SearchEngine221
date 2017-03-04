@@ -12,14 +12,14 @@ import java.util.stream.Collectors;
 
 /**
  * Created by junm5 on 2/22/17.
- * this service is aim to filter out the stop words in the tokens
+ * this db is aim to filter out the stop words in the tokens
  */
 @Component(value = "stopWordsFilter")
 public class StopWordsFilter {
 
     private Set<String> stopWordsContainer = new HashSet<>();
-//    private static String STOP_WORDS_PATH = SysPathUtil.getSysPath() + "/SearchEngine/conf/stopword.txt";
-    private static String STOP_WORDS_PATH = SysPathUtil.getSysPath() + "/conf/stopword.txt";
+    private static String STOP_WORDS_PATH = SysPathUtil.getSysPath() + "/SearchEngine/conf/stopword.txt";
+//    private static String STOP_WORDS_PATH = SysPathUtil.getSysPath() + "/conf/stopword.txt";
 
     /**
      * load stop words from stopword.txt file into memory
