@@ -1,10 +1,9 @@
-<div class="col-md-offset-1 col-md-8">
     {{#if records}}
         {{#each records}}
             <article>
-                <a href="{{this.url}}"><h4>{{this.title}}</h4></a>
-                <p>{{this.desc}}</p>
-                <a href="{{this.url}}">{{this.url}}</a>
+                <a href="{{this.attributes.url}}"><h4>{{this.attributes.title}}</h4></a>
+                <p>{{this.attributes.desc}}</p>
+                <a href="{{this.attributes.url}}">{{this.attributes.url}}</a>
             </article>
         {{/each}}
     {{else}}
@@ -14,4 +13,3 @@
             <h4>No records</h4>
         {{/if}}
     {{/if}}
-</div>

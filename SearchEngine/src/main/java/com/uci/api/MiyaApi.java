@@ -25,10 +25,10 @@ public class MiyaApi {
 //    private DBHandler dbHandler;
 
     @RequestMapping(path = "/query/{query}", method = RequestMethod.GET)
-    public Response query(@PathVariable String query) {
+    public List<Abstract> query(@PathVariable String query) {
         System.out.println("receiving :" + query);
         List<Abstract> abstractList = buildAbstractsTest();
-        return Response.success(abstractList);
+        return abstractList;
     }
 
     private List<Abstract> buildAbstractsTest() {

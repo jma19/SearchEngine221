@@ -282,15 +282,15 @@ var requirejs, require, define;
                     //Convert baseName to array, and lop off the last part,
                     //so that . matches that 'directory' and not name of the baseName's
                     //module. For instance, baseName of 'one/two/three', maps to
-                    //'one/two/three.module', but we want the directory, 'one/two' for
+                    //'one/two/three.js', but we want the directory, 'one/two' for
                     //this normalization.
                     normalizedBaseParts = baseParts.slice(0, baseParts.length - 1);
                     name = name.split('/');
                     lastIndex = name.length - 1;
 
-                    // If wanting node ID compatibility, strip .module from end
+                    // If wanting node ID compatibility, strip .js from end
                     // of IDs. Have to do this here, and not in nameToUrl
-                    // because node allows either .module or non .module to map
+                    // because node allows either .js or non .js to map
                     // to same file.
                     if (config.nodeIdCompat && jsSuffixRegExp.test(name[lastIndex])) {
                         name[lastIndex] = name[lastIndex].replace(jsSuffixRegExp, '');
@@ -1315,7 +1315,7 @@ var requirejs, require, define;
 
                         //Save pointer to main module ID for pkg name.
                         //Remove leading dot in main, so main paths are normalized,
-                        //and remove any trailing .module, since different package
+                        //and remove any trailing .js, since different package
                         //envs have different conventions: some use a module name,
                         //some use a file name.
                         config.pkgs[name] = pkgObj.name + '/' + (pkgObj.main || 'main')
@@ -1338,7 +1338,7 @@ var requirejs, require, define;
 
                 //If a deps array or a config callback is specified, then call
                 //require with those args. This is useful when require is defined as a
-                //config object before require.module is loaded.
+                //config object before require.js is loaded.
                 if (cfg.deps || cfg.callback) {
                     context.require(cfg.deps || [], cfg.callback);
                 }
@@ -1592,11 +1592,11 @@ var requirejs, require, define;
 
                 //If a colon is in the URL, it indicates a protocol is used and it is just
                 //an URL to a file, or if it starts with a slash, contains a query arg (i.e. ?)
-                //or ends with .module, then assume the user meant to use an url and not a module id.
+                //or ends with .js, then assume the user meant to use an url and not a module id.
                 //The slash is important for protocol-less URLs as well as full paths.
                 if (req.jsExtRegExp.test(moduleName)) {
                     //Just a plain path, not module name lookup, so just return it.
-                    //Add extension if it is included. This is a bit wonky, only non-.module things pass
+                    //Add extension if it is included. This is a bit wonky, only non-.js things pass
                     //an extension, this method probably needs to be reworked.
                     url = moduleName + (ext || '');
                 } else {
@@ -1624,7 +1624,7 @@ var requirejs, require, define;
 
                     //Join the path parts together, then figure out if baseUrl is needed.
                     url = syms.join('/');
-                    url += (ext || (/^data\:|\?/.test(url) || skipExt ? '' : '.module'));
+                    url += (ext || (/^data\:|\?/.test(url) || skipExt ? '' : '.js'));
                     url = (url.charAt(0) === '/' || url.match(/^[\w\+\.\-]+:/) ? '' : config.baseUrl) + url;
                 }
 
@@ -1934,7 +1934,7 @@ var requirejs, require, define;
 
     //Look for a data-main script attribute, which could also adjust the baseUrl.
     if (isBrowser && !cfg.skipDataMain) {
-        //Figure out baseUrl. Get it from the script tag with require.module in it.
+        //Figure out baseUrl. Get it from the script tag with require.js in it.
         eachReverse(scripts(), function (script) {
             //Set the 'head' where we can append children by
             //using the script's parent.
@@ -1961,7 +1961,7 @@ var requirejs, require, define;
                     cfg.baseUrl = subPath;
                 }
 
-                //Strip off any trailing .module since mainScript is now
+                //Strip off any trailing .js since mainScript is now
                 //like a module name.
                 mainScript = mainScript.replace(jsSuffixRegExp, '');
 
