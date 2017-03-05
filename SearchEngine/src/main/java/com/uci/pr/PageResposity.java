@@ -1,12 +1,14 @@
 package com.uci.pr;
 
 import com.uci.mode.Page;
+import org.springframework.stereotype.Service;
 
 import java.util.*;
 
 /**
  * Created by junm5 on 3/3/17.
  */
+@Service
 public class PageResposity {
 
     private Map<String, Page> map = new HashMap<>();
