@@ -22,7 +22,7 @@ public class AnchorTextProcessorTest {
     @Autowired
     private AnchorTextProcessor anchorTextProcessor;
     @Test
-    public void should_generate_anchor_text_and_save_into_files() throws Exception {
+    public void should_generate_anchor_text_and_save_into_redis() throws Exception {
         anchorTextProcessor.parseAnchorTextFromFile();
         anchorTextProcessor.saveIntoRedis();
     }

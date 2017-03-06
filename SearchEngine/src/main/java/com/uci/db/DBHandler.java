@@ -45,7 +45,11 @@ public class DBHandler {
         return t == null ? null : t;
     }
 
+    public boolean containsKey(Table table, String key) {
+        return redisCacheMap.get(table).get(key) != null;
+    }
+
     public void clearAll(Table table) {
-        redisCacheMap.get(redisCacheMap).clear();
+        redisCacheMap.get(table).clear();
     }
 }

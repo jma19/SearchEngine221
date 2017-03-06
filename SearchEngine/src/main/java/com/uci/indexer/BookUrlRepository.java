@@ -17,8 +17,7 @@ import java.util.List;
 @Service
 public class BookUrlRepository {
     private MyFileReader myFileReader;
-        private String validUrl = SysPathUtil.getSysPath() + "/SearchEngine/conf/validUrl.json";
-//    private String validUrl = SysPathUtil.getSysPath() + "/conf/validUrl.json";
+    private String validUrl = StopWordsFilter.class.getClassLoader().getResource("validUrl.json").getPath();
 
     private Iterator<URLPath> iterator;
     private int size = 0;

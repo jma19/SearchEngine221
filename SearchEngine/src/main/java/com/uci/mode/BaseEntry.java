@@ -3,9 +3,7 @@ package com.uci.mode;
 import com.uci.constant.Tag;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 /**
  * Created by junm5 on 2/28/17.
@@ -13,6 +11,12 @@ import java.util.Set;
 public class BaseEntry {
     private Tag tag;
     private List<Integer> pos;
+    private int termFre;
+
+    public BaseEntry setTermFre(int termFre) {
+        this.termFre = termFre;
+        return this;
+    }
 
     public Tag getTag() {
         return tag;

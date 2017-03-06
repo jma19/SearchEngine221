@@ -5,7 +5,6 @@ import com.uci.constant.Table;
 import com.uci.io.MyFileReader;
 import com.uci.mode.URLPath;
 import com.uci.db.DBHandler;
-import com.uci.utils.SysPathUtil;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,14 +34,13 @@ public class BookKeepingFileProcessor {
 
     private int i = 0;
 
-        private String prefix = SysPathUtil.getSysPath() + "/SearchEngine/WEBPAGES_RAW/";
-//    private String prefix = SysPathUtil.getSysPath() + "/WEBPAGES_RAW/";
+    private String prefix = StopWordsFilter.class.getClassLoader().getResource("WEBPAGES_RAW").getPath();
 
     //1 - 18660
-    public void readFileIntoDocument() {
+    public void process() {
         while (bookUrlRepository.hashNext()) {
             URLPath urlPath = bookUrlRepository.next();
-            String path = prefix + urlPath.getPath();
+            String path = prefix + "/" + urlPath.getPath();
             MyFileReader myFileReader = new MyFileReader(path);
             String html = myFileReader.readAll();
             if (html != null && !html.isEmpty()) {
@@ -65,10 +63,12 @@ public class BookKeepingFileProcessor {
                 }
             }
         }
+        System.out.println("document size = " + i);
         dbHandler.put(Table.DOCUMENT, Constant.SIZE, i);
         System.out.println("saving indexing.....");
         indexer.calculateTFIDF();
-        indexer.saveIndexes();
+//        indexer.saveIndexesToFiles();
+        indexer.saveIndexesToRedis();
     }
 
     private void buildDocumentIndex(com.uci.mode.Document document) {

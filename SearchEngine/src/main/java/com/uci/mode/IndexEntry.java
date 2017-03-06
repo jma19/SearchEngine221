@@ -10,7 +10,7 @@ public class IndexEntry {
     //document id
     private int id;
     private double tfIdf;
-
+    private int termFre;
     private List<BaseEntry> baseEntries;
 
     public IndexEntry(int id) {
@@ -18,20 +18,28 @@ public class IndexEntry {
         baseEntries = new ArrayList<>();
     }
 
+    public IndexEntry setTermFre(int termFre) {
+        this.termFre = termFre;
+        return this;
+    }
+
     public int getTermFre() {
-        int fre = 0;
-        for (BaseEntry baseEntry : baseEntries) {
-            fre += baseEntry.getTermFre() * baseEntry.getTag().getWight();
+        termFre = 0;
+        if (baseEntries != null) {
+            for (BaseEntry baseEntry : baseEntries) {
+                termFre += baseEntry.getTermFre() * baseEntry.getTag().getWight();
+            }
         }
-        return fre;
+        return termFre;
     }
 
     public List<BaseEntry> getBaseEntries() {
         return baseEntries;
     }
 
-    public void setBaseEntries(List<BaseEntry> baseEntries) {
+    public IndexEntry setBaseEntries(List<BaseEntry> baseEntries) {
         this.baseEntries = baseEntries;
+        return this;
     }
 
     public double getTfIdf() {
@@ -51,8 +59,9 @@ public class IndexEntry {
         return id;
     }
 
-    public void setId(int id) {
+    public IndexEntry setId(int id) {
         this.id = id;
+        return this;
     }
 
     @Override
@@ -60,6 +69,7 @@ public class IndexEntry {
         return "IndexEntry{" +
                 "id=" + id +
                 ", tfIdf=" + tfIdf +
+                ", termFre=" + termFre +
                 ", baseEntries=" + baseEntries +
                 '}';
     }

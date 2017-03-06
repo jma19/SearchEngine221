@@ -26,6 +26,7 @@ public class IndexerTest {
     private Indexer indexer;
     @Test
     public void should_load_index_into_memeory() throws Exception {
+
     }
 
     @Test
@@ -35,9 +36,5 @@ public class IndexerTest {
     @Test
     public void should_compute_tf_idf() throws Exception {
 
-    }
-
-    private List<String> buildTestTokens() {
-        return Lists.newArrayList("hello", "world", "you", "are", "so", "smart");
     }
 }

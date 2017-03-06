@@ -11,6 +11,8 @@ import com.uci.mode.IndexEntry;
 import com.uci.mode.BaseEntry;
 import com.uci.mode.Document;
 import com.uci.db.DBHandler;
+import com.uci.mode.Page;
+import javafx.scene.control.Tab;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import com.uci.utils.JsonUtils;
@@ -29,8 +31,8 @@ public class Indexer {
     private TextProcessor textProcessor;
 
     private TreeMap<String, List<IndexEntry>> indexMap = new TreeMap<>((o1, o2) -> o1.compareTo(o2));
-        private String indexFile = SysPathUtil.getSysPath() + "/SearchEngine/conf/index.txt";
-//    private String indexFile = SysPathUtil.getSysPath() + "/conf/index.txt";
+    private String indexFile = StopWordsFilter.class.getClassLoader().getResource("index.txt").getPath();
+
     private Integer docSize;
     @Autowired
     private DBHandler dbHandler;
@@ -40,7 +42,6 @@ public class Indexer {
      */
     @PostConstruct
     public void loadIndexes() {
-        docSize = dbHandler.get(Table.DOCUMENT, Constant.SIZE, Integer.class);
         MyFileReader fileReader = null;
         try {
             fileReader = new MyFileReader(indexFile);
@@ -59,13 +60,14 @@ public class Indexer {
     }
 
     public boolean contains(String index) {
-        return indexMap.containsKey(index);
+        return dbHandler.containsKey(Table.TERM, index);
     }
 
     public List<IndexEntry> getIndexEntity(String term) {
-        return indexMap.get(term);
+        List<IndexEntry> list = (List<IndexEntry>) dbHandler.get(Table.TERM, term, List.class);
+        return list;
+//        return indexMap.get(term);
     }
-
 
     public void indexize(Document document) {
         Map<String, BaseEntry> posTitleMap = getEntryMap(Tag.TITLE, document.getTitle());
@@ -140,7 +142,7 @@ public class Indexer {
         return map;
     }
 
-    public void saveIndexes() {
+    public void saveIndexesToFiles() {
         System.out.println("index number: " + indexMap.size());
         MyFileWriter.createFile(indexFile);
         MyFileWriter myFileWriter = null;
@@ -160,16 +162,28 @@ public class Indexer {
         }
     }
 
+    public void saveIndexesToRedis() {
+        System.out.println("index number: " + indexMap.size());
+        for (String key : indexMap.keySet()) {
+            System.out.println("storing term: " + key);
+            dbHandler.put(Table.TERM, key, indexMap.get(key));
+        }
+        indexMap.clear();
+        System.out.println("save indexes to redis success!!!");
+    }
+
+
     /**
      * @param term
      * @return
      */
     public List<IndexEntry> getIndexEntities(String term) {
-        List<IndexEntry> termPoses = indexMap.get(term);
+        List<IndexEntry> termPoses = dbHandler.get(Table.TERM, term, List.class);
         return termPoses == null ? new ArrayList<>() : termPoses;
     }
 
     public void calculateTFIDF() {
+        docSize = dbHandler.get(Table.DOCUMENT, Constant.SIZE, Integer.class);
         Set<String> keySet = indexMap.keySet();
         for (String key : keySet) {
             List<IndexEntry> indexEntries = indexMap.get(key);
@@ -183,7 +197,7 @@ public class Indexer {
     }
 
     public double getIDF(String term) {
-        List<IndexEntry> indexEntries = indexMap.get(term);
+        List<IndexEntry> indexEntries = (List<IndexEntry>) dbHandler.get(Table.TERM, term, List.class);
         return Math.log10((double) docSize / indexEntries.size());
     }
 }

@@ -23,7 +23,7 @@ public class AnchorTextProcessor {
 
     @Autowired
     private BookUrlRepository bookUrlRepository;
-    private String prefix = SysPathUtil.getSysPath() + "/WEBPAGES_RAW/";
+    private String prefix = StopWordsFilter.class.getClassLoader().getResource("WEBPAGES_RAW").getPath();
 
     @Autowired
     private DBHandler dbHandler;
@@ -33,7 +33,7 @@ public class AnchorTextProcessor {
     public void parseAnchorTextFromFile() {
         List<URLPath> urlPaths = bookUrlRepository.getURLPaths();
         for (URLPath urlPath : urlPaths) {
-            String path = prefix + urlPath.getPath();
+            String path = prefix + "/" + urlPath.getPath();
             MyFileReader myFileReader = new MyFileReader(path);
             String html = myFileReader.readAll();
             if (html != null && !html.isEmpty()) {

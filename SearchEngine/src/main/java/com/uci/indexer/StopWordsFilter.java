@@ -18,8 +18,7 @@ import java.util.stream.Collectors;
 public class StopWordsFilter {
 
     private Set<String> stopWordsContainer = new HashSet<>();
-    private static String STOP_WORDS_PATH = SysPathUtil.getSysPath() + "/SearchEngine/conf/stopword.txt";
-//    private static String STOP_WORDS_PATH = SysPathUtil.getSysPath() + "/conf/stopword.txt";
+    String STOP_WORDS_PATH = StopWordsFilter.class.getClassLoader().getResource("stopword.txt").getPath();
 
     /**
      * load stop words from stopword.txt file into memory
