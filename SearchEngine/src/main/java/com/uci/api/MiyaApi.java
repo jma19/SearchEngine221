@@ -1,15 +1,23 @@
 package com.uci.api;
 
-import com.google.common.collect.Lists;
 import com.uci.constant.Table;
+import com.uci.db.DBHandler;
 import com.uci.indexer.Indexer;
 import com.uci.indexer.TextProcessor;
-import com.uci.mode.*;
-import com.uci.db.DBHandler;
+import com.uci.mode.Abstract;
+import com.uci.mode.Document;
+import com.uci.mode.IndexEntry;
+import com.uci.mode.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @RestController
@@ -58,8 +66,7 @@ public class MiyaApi {
         if (queryFin.size() == 1) {
             return queryOneWord(queryFin.get(0));
 
-        }
-        else if (queryFin.size() >= 2) {
+        } else if (queryFin.size() >= 2) {
             return queryMultiWords(queryFin);
         }
         return new ArrayList<>();
@@ -119,7 +126,6 @@ public class MiyaApi {
             list.add(new Pair(docId, dot));
         }
         List<Pair> pairs = list.stream().sorted().collect(Collectors.toList());
-
         return getAbstractsByPairs(pairs);
     }
 
@@ -127,8 +133,10 @@ public class MiyaApi {
         List<Abstract> res = new ArrayList<>();
         for (Pair pair : pairs) {
             Document document = dbHandler.get(Table.DOCUMENT, String.valueOf(pair.getId()), Document.class);
+            String dob = document.getBody();
+            String body = dob.length() < 200 ? dob : dob.substring(0, 200);
             res.add(new Abstract()
-                    .setDesc(document.getBody().substring(0, 200))
+                    .setDesc(body)
                     .setTitle(document.getTitle())
                     .setUrl(document.getUrl()));
         }

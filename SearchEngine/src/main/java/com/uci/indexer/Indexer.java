@@ -13,6 +13,8 @@ import com.uci.mode.Document;
 import com.uci.db.DBHandler;
 import com.uci.mode.Page;
 import javafx.scene.control.Tab;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import com.uci.utils.JsonUtils;
@@ -33,14 +35,19 @@ public class Indexer {
     private TreeMap<String, List<IndexEntry>> indexMap = new TreeMap<>((o1, o2) -> o1.compareTo(o2));
     private String indexFile = StopWordsFilter.class.getClassLoader().getResource("index.txt").getPath();
 
-    private Integer docSize;
+
     @Autowired
     private DBHandler dbHandler;
+
+    private Integer docSize;
+
+    private Log logger = LogFactory.getLog(Indexer.class);
+
 
     /**
      * load index into memory
      */
-    @PostConstruct
+//    @PostConstruct
     public void loadIndexes() {
         MyFileReader fileReader = null;
         try {
@@ -197,7 +204,15 @@ public class Indexer {
     }
 
     public double getIDF(String term) {
+        if (docSize == null) {
+            docSize = dbHandler.get(Table.DOCUMENT, Constant.SIZE, Integer.class);
+            logger.info(String.format("document size = %d", docSize));
+        }
         List<IndexEntry> indexEntries = (List<IndexEntry>) dbHandler.get(Table.TERM, term, List.class);
+        if (indexEntries == null || indexEntries.isEmpty()) {
+            logger.info(String.format("term=%s is empty", term));
+            return 0;
+        }
         return Math.log10((double) docSize / indexEntries.size());
     }
 }
