@@ -2,7 +2,7 @@
 package com.uci.constant;
 
 public enum Table {
-    DOCUMENT("document"), TERM("term"), ANCHOR("anchor");
+    DOCUMENT("document"), TERM("term"), ANCHOR("anchor"), RANK("rank");
     String name;
 
     Table(String name) {

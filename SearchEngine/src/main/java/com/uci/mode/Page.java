@@ -1,5 +1,6 @@
 package com.uci.mode;
 
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -9,7 +10,7 @@ public class Page {
     private String url;
     private Double score;
     private Integer outputNumber;
-    private Set<Page> inputPages;
+    private List<Page> inputPages;
     private boolean isVisited;
 
     public boolean isVisited() {
@@ -56,11 +57,11 @@ public class Page {
         return this;
     }
 
-    public Set<Page> getInputPages() {
+    public List<Page> getInputPages() {
         return inputPages;
     }
 
-    public Page setInputPages(Set<Page> inputPages) {
+    public Page setInputPages(List<Page> inputPages) {
         this.inputPages = inputPages;
         return this;
     }

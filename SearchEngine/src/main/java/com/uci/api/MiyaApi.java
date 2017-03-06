@@ -125,7 +125,8 @@ public class MiyaApi {
             double dot = dot(query, docV);
             list.add(new Pair(docId, dot));
         }
-        List<Pair> pairs = list.stream().sorted().collect(Collectors.toList());
+        List<Pair> pairs = list.stream()
+                        .sorted().limit(10).collect(Collectors.toList());
         return getAbstractsByPairs(pairs);
     }
 

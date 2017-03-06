@@ -1,9 +1,11 @@
 package com.uci.pr;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.uci.mode.Page;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -13,19 +15,18 @@ public class PageRank {
     //PR(A) = (1-d) + d ∑ (PR(Ti)/C(Ti))
     private static final double d = 0.85;
 
-    public static double calcaulatePR(Set<Page> pageSet, Page page) {
+    public static double calculatePR(Page page) {
         if (page == null || page.isVisited()) {
             return 0;
         }
-        pageSet.add(page);
-        Set<Page> inputPages = page.getInputPages();
+        List<Page> inputPages = page.getInputPages();
         double res = 1 - d;
         if (inputPages == null) {
             page.setScore(res);
             return res;
         }
         for (Page temp : inputPages) {
-            res += d * calcaulatePR(pageSet, temp) / temp.getOutputNumber();
+            res += d * calculatePR(temp) / temp.getOutputNumber();
         }
         page.setScore(res);
         return res;
@@ -42,11 +43,11 @@ public class PageRank {
         t2.setOutputNumber(1);
         t3.setOutputNumber(1);
 
-        page.setInputPages(Sets.newHashSet(t1, t2, t3));
+        page.setInputPages(Lists.newArrayList(t1, t2, t3));
         Set<Page> set = new HashSet();
-        calcaulatePR(set, page);
 
-        for(Page page1 : set){
+
+        for (Page page1 : set) {
             System.out.println(page1.getScore());
         }
     }

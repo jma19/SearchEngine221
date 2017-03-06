@@ -10,9 +10,7 @@ import javax.annotation.PostConstruct;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.uci.constant.Table.ANCHOR;
-import static com.uci.constant.Table.DOCUMENT;
-import static com.uci.constant.Table.TERM;
+import static com.uci.constant.Table.*;
 
 /**
  * Created by junm5 on 2/27/17.
@@ -31,6 +29,7 @@ public class DBHandler {
         redisCacheMap.put(DOCUMENT, new RedisCache(DOCUMENT.getName(), DOCUMENT.getName().getBytes(), template, EXPIRE_TIME));
         redisCacheMap.put(TERM, new RedisCache(TERM.getName(), TERM.getName().getBytes(), template, EXPIRE_TIME));
         redisCacheMap.put(ANCHOR, new RedisCache(ANCHOR.getName(), ANCHOR.getName().getBytes(), template, EXPIRE_TIME));
+        redisCacheMap.put(RANK, new RedisCache(RANK.getName(), RANK.getName().getBytes(), template, EXPIRE_TIME));
     }
 
 

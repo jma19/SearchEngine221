@@ -28,8 +28,6 @@ public class AnchorTextProcessor {
     @Autowired
     private DBHandler dbHandler;
 
-    private final String ANHOR_KEY = "ANCHOR";
-
     public void parseAnchorTextFromFile() {
         List<URLPath> urlPaths = bookUrlRepository.getURLPaths();
         for (URLPath urlPath : urlPaths) {

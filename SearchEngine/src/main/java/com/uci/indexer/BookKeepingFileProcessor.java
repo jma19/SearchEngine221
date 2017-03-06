@@ -24,9 +24,6 @@ public class BookKeepingFileProcessor {
     private Indexer indexer;
 
     @Autowired
-    private TextProcessor textProcessor;
-
-    @Autowired
     private DBHandler dbHandler;
 
     @Autowired
