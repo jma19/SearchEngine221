@@ -16,7 +16,6 @@ import java.util.*;
  */
 @Service
 public class PageRepository {
-
     @Autowired
     private DBHandler dbHandler;
 
@@ -32,11 +31,11 @@ public class PageRepository {
         }
         for (String outUrl : outlinks) {
             Page page = addPage(outUrl, outlinks);
-            List<Page> inputPages = page.getInputPages();
+            List<String> inputPages = page.getInputPages();
             if (inputPages == null) {
                 inputPages = new ArrayList<>();
             }
-            inputPages.add(source);
+            inputPages.add(url);
         }
     }
 
@@ -50,19 +49,8 @@ public class PageRepository {
         return page;
     }
 
-
-    public Map<String, Double> calculatePrScore() {
-        Map<String, Double> res = Maps.newHashMap();
-        Collection<Page> pages = map.values();
-        for (Page page : pages) {
-            if (!page.isVisited()) {
-                PageRank.calculatePR(page);
-            }
-        }
-        for (Page page : pages) {
-            res.put(page.getUrl(), page.getScore());
-        }
-        return res;
+    public Double getPrScore(String url){
+        return map.get(url).getScore();
     }
 
     public void savePrScores(Map<String, Double> maps) {

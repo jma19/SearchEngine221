@@ -8,9 +8,9 @@ import java.util.Set;
  */
 public class Page {
     private String url;
-    private Double score;
+    private Double score = 1.0;
     private Integer outputNumber;
-    private List<Page> inputPages;
+    private List<String> inputPages;
     private boolean isVisited;
 
     public boolean isVisited() {
@@ -57,11 +57,11 @@ public class Page {
         return this;
     }
 
-    public List<Page> getInputPages() {
+    public List<String> getInputPages() {
         return inputPages;
     }
 
-    public Page setInputPages(List<Page> inputPages) {
+    public Page setInputPages(List<String> inputPages) {
         this.inputPages = inputPages;
         return this;
     }
