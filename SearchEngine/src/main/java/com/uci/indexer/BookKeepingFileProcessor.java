@@ -1,14 +1,22 @@
 package com.uci.indexer;
 
+import com.google.common.collect.Lists;
 import com.uci.constant.Constant;
 import com.uci.constant.Table;
 import com.uci.io.MyFileReader;
+import com.uci.mode.Page;
 import com.uci.mode.URLPath;
 import com.uci.db.DBHandler;
+import com.uci.pr.PageRank;
+import com.uci.pr.PageRepository;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * parsing html file into document and generating index file
@@ -29,12 +37,18 @@ public class BookKeepingFileProcessor {
     @Autowired
     private AnchorTextProcessor anchorTextProcessor;
 
+    @Autowired
+    private PageRepository pageRepository;
+
     private int i = 0;
 
     private String prefix = StopWordsFilter.class.getClassLoader().getResource("WEBPAGES_RAW").getPath();
 
+    private static final int ITER_NUM = 20;
+
     //1 - 18660
     public void process() {
+        Map<String, Integer> urlDoc = new HashMap<>();
         while (bookUrlRepository.hashNext()) {
             URLPath urlPath = bookUrlRepository.next();
             String path = prefix + "/" + urlPath.getPath();
@@ -51,6 +65,13 @@ public class BookKeepingFileProcessor {
                         buildDocumentIndex(document);
                         dbHandler.put(Table.DOCUMENT, String.valueOf(i), document);
                         System.out.println("generate document index i = " + i);
+
+                        Map<String, String> outgoingLinks = Htmlparser.getOutgoingLinks(doc, urlPath.getUrl());
+                        if (!outgoingLinks.isEmpty()) {
+                            Set<String> outLinks = outgoingLinks.keySet();
+                            pageRepository.addLinks(urlPath.getUrl(), Lists.newArrayList(outLinks));
+                        }
+                        urlDoc.put(urlPath.getUrl(), i);
                     }
                 } catch (Exception exp) {
                     System.out.println("parsing failed: " + path);
@@ -66,6 +87,21 @@ public class BookKeepingFileProcessor {
         indexer.calculateTFIDF();
         indexer.saveIndexesToFiles();
         indexer.saveIndexesToRedis();
+        System.out.println("calculating page rank.....");
+        Map<String, Page> graph = pageRepository.getGraph();
+        PageRank.calculatePR(graph, ITER_NUM);
+        System.out.println("saving page rank.....");
+        pageRepository.savePrScores(join(graph, urlDoc));
+    }
+
+    private Map<Integer, Double> join(Map<String, Page> map, Map<String, Integer> urlDoc) {
+        Map<Integer, Double> res = new HashMap<>();
+        Set<String> set = map.keySet();
+        for (String key : set) {
+            Integer docId = urlDoc.get(key);
+            res.put(docId, map.get(key).getScore());
+        }
+        return res;
     }
 
     private void buildDocumentIndex(com.uci.mode.Document document) {

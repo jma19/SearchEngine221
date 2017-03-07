@@ -22,12 +22,10 @@ public class PageRank {
             for (String page : pages) {
                 double res = 1 - d;
                 List<String> inputPages = pageMap.get(page).getInputPages();
-
                 if (inputPages == null || inputPages.isEmpty()) {
                     pageMap.get(page).setScore(res);
                     return;
                 }
-
                 for (String temp : inputPages) {
                     Page sor = pageMap.get(temp);
                     res += d * sor.getScore() / sor.getOutputNumber();

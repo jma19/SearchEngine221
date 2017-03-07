@@ -49,14 +49,18 @@ public class PageRepository {
         return page;
     }
 
-    public Double getPrScore(String url){
+    public Double getPrScore(String url) {
         return map.get(url).getScore();
     }
 
-    public void savePrScores(Map<String, Double> maps) {
-        for (String key : maps.keySet()) {
-            dbHandler.put(Table.RANK, key, maps.get(key));
+    public void savePrScores(Map<Integer, Double> maps) {
+        for (Integer key : maps.keySet()) {
+            dbHandler.put(Table.RANK, String.valueOf(key), maps.get(key));
         }
+    }
+
+    public Map<String, Page> getGraph() {
+        return this.map;
     }
 
     public double getPrScore(int docId) {

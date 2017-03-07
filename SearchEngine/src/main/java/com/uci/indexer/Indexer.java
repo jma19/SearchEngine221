@@ -1,6 +1,7 @@
 package com.uci.indexer;
 
 import com.google.common.base.Strings;
+import com.google.common.math.BigIntegerMath;
 import com.google.gson.reflect.TypeToken;
 import com.uci.constant.Constant;
 import com.uci.constant.Table;
@@ -21,6 +22,7 @@ import com.uci.utils.JsonUtils;
 import com.uci.utils.SysPathUtil;
 
 import javax.annotation.PostConstruct;
+import java.math.BigInteger;
 import java.util.*;
 
 /**
