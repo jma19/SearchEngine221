@@ -1,5 +1,6 @@
 package com.uci.api;
 
+import com.uci.constant.Constant;
 import com.uci.constant.Table;
 import com.uci.db.DBHandler;
 import com.uci.indexer.Indexer;
@@ -8,6 +9,7 @@ import com.uci.mode.Abstract;
 import com.uci.mode.Document;
 import com.uci.mode.IndexEntry;
 import com.uci.mode.Pair;
+import com.uci.pr.PageRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -31,6 +33,9 @@ public class MiyaApi {
 
     @Autowired
     private DBHandler dbHandler;
+
+    @Autowired
+    private PageRepository pageRepository;
 
     @RequestMapping(path = "/query/{query}", method = RequestMethod.GET)
     public List<Abstract> query(@PathVariable String query) {
@@ -122,7 +127,7 @@ public class MiyaApi {
         for (Integer docId : docMap.keySet()) {
             double[] docV = docMap.get(docId);
             normalize(docV);
-            double dot = dot(query, docV);
+            double dot = Constant.alpha * dot(query, docV) + (1 - Constant.alpha) * pageRepository.getPrScore(docId) ;
             list.add(new Pair(docId, dot));
         }
         List<Pair> pairs = list.stream()
