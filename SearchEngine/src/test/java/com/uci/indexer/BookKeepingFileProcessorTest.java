@@ -30,11 +30,12 @@ public class BookKeepingFileProcessorTest {
 
     @Test
     public void should_get_all_page_rank_value() throws Exception {
-
         for (int i = 0; i < 18660; i++) {
-            System.out.println(pageRepository.getPrScore(i));
+            double prScore = pageRepository.getPrScore(i);
+            if(prScore != 1 && prScore != 0){
+                System.out.println(i + ":" + prScore);
+            }
         }
-
     }
 
 
