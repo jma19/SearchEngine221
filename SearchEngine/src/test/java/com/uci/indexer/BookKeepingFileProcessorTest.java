@@ -1,6 +1,7 @@
 package com.uci.indexer;
 
 import com.uci.ServerApplication;
+import com.uci.pr.PageRepository;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,12 +20,22 @@ public class BookKeepingFileProcessorTest {
     @Autowired
     private BookKeepingFileProcessor bookKeepingFileProcessor;
 
+    @Autowired
+    PageRepository pageRepository;
 
     @Test
     public void readFileIntoDocumnet() throws Exception {
         bookKeepingFileProcessor.process();
     }
 
+    @Test
+    public void should_get_all_page_rank_value() throws Exception {
+
+        for (int i = 0; i < 18660; i++) {
+            System.out.println(pageRepository.getPrScore(i));
+        }
+
+    }
 
 
 }

@@ -23,34 +23,31 @@ public class PageRepository {
 
     public void addLinks(String url, List<String> outlinks) {
         //create source Page
-        Page source = addPage(url, outlinks);
+        Page source = addPage(url);
+        source.setOutputNumber(outlinks.size());
 
         //create destination Pages
         if (outlinks == null || outlinks.isEmpty()) {
             return;
         }
         for (String outUrl : outlinks) {
-            Page page = addPage(outUrl, outlinks);
+            Page page = addPage(outUrl);
             List<String> inputPages = page.getInputPages();
             if (inputPages == null) {
                 inputPages = new ArrayList<>();
+                page.setInputPages(inputPages);
             }
-            inputPages.add(url);
+            inputPages.add(source.getUrl());
         }
     }
 
-    private Page addPage(String url, List<String> outlinks) {
+    private Page addPage(String url) {
         Page page = map.get(url);
         if (page == null) {
             page = new Page(url);
             map.put(url, page);
-            page.setOutputNumber(outlinks.size());
         }
         return page;
-    }
-
-    public Double getPrScore(String url) {
-        return map.get(url).getScore();
     }
 
     public void savePrScores(Map<Integer, Double> maps) {

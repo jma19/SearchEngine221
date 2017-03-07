@@ -23,11 +23,11 @@ public class DBHandlerTest {
     @Autowired
     private DBHandler dbHandler;
 
-    @Test
-    public void should_clear_document_table() throws Exception {
-        dbHandler.clearAll(Table.DOCUMENT);
-        dbHandler.clearAll(Table.ANCHOR);
-    }
+//    @Test
+//    public void should_clear_document_table() throws Exception {
+//        dbHandler.clearAll(Table.DOCUMENT);
+//        dbHandler.clearAll(Table.ANCHOR);
+//    }
 
     @Test
     public void should_store_list_() throws Exception {
@@ -42,4 +42,9 @@ public class DBHandlerTest {
         System.out.println(list1);
 
     }
+//    @Test
+//    public void should_claer_page_rank() throws Exception {
+//        dbHandler.clearAll(Table.RANK);
+//
+//    }
 }
