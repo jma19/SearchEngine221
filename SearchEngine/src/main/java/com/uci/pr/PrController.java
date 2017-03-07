@@ -27,10 +27,6 @@ public class PrController {
     @Autowired
     private PageRepository pageResposity;
 
-    @Autowired
-    private DBHandler dbHandler;
-
-
     private String prefix = StopWordsFilter.class.getClassLoader().getResource("WEBPAGES_RAW").getPath();
 
     //1 - 18660
@@ -57,7 +53,7 @@ public class PrController {
                 }
             }
         }
-        pageResposity.calculatePrScore();
-
+        Map<String, Double> prScore = pageResposity.calculatePrScore();
+        pageResposity.savePrScores(prScore);
     }
 }

@@ -1,7 +1,12 @@
 package com.uci.pr;
 
 import com.google.common.collect.Maps;
+import com.google.common.collect.Streams;
+import com.uci.constant.Table;
+import com.uci.db.DBHandler;
 import com.uci.mode.Page;
+import javafx.scene.control.Tab;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -11,6 +16,9 @@ import java.util.*;
  */
 @Service
 public class PageRepository {
+
+    @Autowired
+    private DBHandler dbHandler;
 
     private Map<String, Page> map = new HashMap<>();
 
@@ -58,7 +66,13 @@ public class PageRepository {
     }
 
     public void savePrScores(Map<String, Double> maps) {
-
+        for (String key : maps.keySet()) {
+            dbHandler.put(Table.RANK, key, maps.get(key));
+        }
     }
 
+    public double getPrScore(int docId) {
+        Double res = dbHandler.get(Table.RANK, String.valueOf(docId), Double.class);
+        return res == null ? 0 : res;
+    }
 }
