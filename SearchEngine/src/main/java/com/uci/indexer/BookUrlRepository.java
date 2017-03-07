@@ -23,7 +23,7 @@ public class BookUrlRepository {
     private int size = 0;
     List<URLPath> urlPaths;
 
-//    @PostConstruct
+    @PostConstruct
     private void loadUrls() {
         System.out.println("read the file with path: " + validUrl);
         try {

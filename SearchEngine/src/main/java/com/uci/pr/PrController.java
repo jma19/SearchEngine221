@@ -1,7 +1,6 @@
 package com.uci.pr;
 
 import com.google.common.collect.Lists;
-import com.uci.db.DBHandler;
 import com.uci.indexer.BookUrlRepository;
 import com.uci.indexer.Htmlparser;
 import com.uci.indexer.StopWordsFilter;
@@ -12,7 +11,6 @@ import org.jsoup.nodes.Document;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 
@@ -25,9 +23,9 @@ public class PrController {
     private BookUrlRepository bookUrlRepository;
 
     @Autowired
-    private PageRepository pageResposity;
+    private PageRepository pageRepository;
 
-    private String prefix = StopWordsFilter.class.getClassLoader().getResource("WEBPAGES_RAW").getPath();
+    private String prefix = PrController.class.getClassLoader().getResource("WEBPAGES_RAW").getPath();
 
     //1 - 18660
     public void process() {
@@ -42,8 +40,7 @@ public class PrController {
                     Map<String, String> outgoingLinks = Htmlparser.getOutgoingLinks(doc, urlPath.getUrl());
                     if (!outgoingLinks.isEmpty()) {
                         Set<String> outLinks = outgoingLinks.keySet();
-                        Collection<String> values = outgoingLinks.values();
-                        pageResposity.addLinks(urlPath.getUrl(), Lists.newArrayList(values));
+                        pageRepository.addLinks(urlPath.getUrl(), Lists.newArrayList(outLinks));
                     }
                 } catch (Exception exp) {
                     System.out.println("parsing failed: " + path);
@@ -53,7 +50,7 @@ public class PrController {
                 }
             }
         }
-        Map<String, Double> prScore = pageResposity.calculatePrScore();
-        pageResposity.savePrScores(prScore);
+        Map<String, Double> prScore = pageRepository.calculatePrScore();
+        pageRepository.savePrScores(prScore);
     }
 }

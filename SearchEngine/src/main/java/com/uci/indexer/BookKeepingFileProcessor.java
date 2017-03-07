@@ -64,7 +64,7 @@ public class BookKeepingFileProcessor {
         dbHandler.put(Table.DOCUMENT, Constant.SIZE, i);
         System.out.println("saving indexing.....");
         indexer.calculateTFIDF();
-//        indexer.saveIndexesToFiles();
+        indexer.saveIndexesToFiles();
         indexer.saveIndexesToRedis();
     }
 
