@@ -1,5 +1,6 @@
 package com.uci.indexer;
 
+import com.fasterxml.jackson.databind.deser.Deserializers;
 import com.google.common.base.Strings;
 import com.google.common.math.BigIntegerMath;
 import com.google.gson.reflect.TypeToken;
@@ -82,7 +83,9 @@ public class Indexer {
         Map<String, BaseEntry> posTitleMap = getEntryMap(Tag.TITLE, document.getTitle());
         Map<String, BaseEntry> posAnchorMap = getEntryMap(Tag.ANCHOR, document.getAnchorText());
         Map<String, BaseEntry> posBodyMap = getEntryMap(Tag.BODY, document.getBody());
-        Map<String, Set<BaseEntry>> res = join(posTitleMap, posAnchorMap, posBodyMap);
+        Map<String, BaseEntry> posUrlMap = getEntryMap(Tag.URL, document.getUrl());
+
+        Map<String, Set<BaseEntry>> res = join(posTitleMap, posAnchorMap, posBodyMap, posUrlMap);
 
         for (String key : res.keySet()) {
             IndexEntry termPos = new IndexEntry(document.getId());
@@ -99,11 +102,13 @@ public class Indexer {
 
     private Map<String, Set<BaseEntry>> join(Map<String, BaseEntry> map1,
                                              Map<String, BaseEntry> map2,
-                                             Map<String, BaseEntry> map3) {
+                                             Map<String, BaseEntry> map3,
+                                             Map<String, BaseEntry> map4) {
         Map<String, Set<BaseEntry>> maps = new HashMap<>();
         join(maps, map1);
         join(maps, map2);
         join(maps, map3);
+        join(maps, map4);
         return maps;
     }
 
@@ -125,12 +130,13 @@ public class Indexer {
         if (Strings.isNullOrEmpty(text)) {
             return new HashMap<>();
         }
-        List<String> tokens = getTokens(text);
+        List<String> tokens = getTokens(tag, text);
         return buildPosMap(tag, tokens);
     }
 
-    private List<String> getTokens(String title) {
-        List<String> tokens = textProcessor.getTokens(title);
+    private List<String> getTokens(Tag tag, String contxt) {
+        List<String> tokens = (tag == Tag.URL) ? textProcessor.getTokensByUrl(contxt)
+                : textProcessor.getTokens(contxt);
         return textProcessor.stemstop(tokens);
     }
 
