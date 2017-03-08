@@ -65,7 +65,7 @@ public class BookKeepingFileProcessor {
 //                        document.setId(i).setAnchorText(dbHandler.get(Table.ANCHOR, urlPath.getUrl(), String.class));
 //                        buildDocumentIndex(document);
 //                        dbHandler.put(Table.DOCUMENT, String.valueOf(i), document);
-                        System.out.println("generate document index i = " + i);
+//                        System.out.println("generate document index i = " + i);
 
                         Map<String, String> outgoingLinks = Htmlparser.getOutgoingLinks(doc, urlPath.getUrl());
                         if (!outgoingLinks.isEmpty()) {
@@ -73,7 +73,7 @@ public class BookKeepingFileProcessor {
                             pageRepository.addLinks(urlPath.getUrl(), Lists.newArrayList(outLinks));
                         }
                         urlDoc.put(urlPath.getUrl(), i);
-                        System.out.println("finish add link for document i = " + i);
+//                        System.out.println("finish add link for document i = " + i);
                     }
                 } catch (Exception exp) {
                     System.out.println("parsing failed: " + path);
@@ -91,12 +91,12 @@ public class BookKeepingFileProcessor {
 //        indexer.saveIndexesToRedis();
         System.out.println("calculating page rank.....");
         Map<String, Page> graph = pageRepository.getGraph();
-        for(String key : graph.keySet()){
-            List<String> inputPages = graph.get(key).getInputPages();
-            if(inputPages != null){
-                System.out.println(inputPages);
-            }
-        }
+//        for(String key : graph.keySet()){
+//            List<String> inputPages = graph.get(key).getInputPages();
+//            if(inputPages != null){
+//                System.out.println(inputPages);
+//            }
+//        }
         PageRank.calculatePR(graph, ITER_NUM);
         System.out.println("saving page rank.....");
         pageRepository.savePrScores(join(graph, urlDoc));
@@ -104,10 +104,9 @@ public class BookKeepingFileProcessor {
 
     private Map<Integer, Double> join(Map<String, Page> map, Map<String, Integer> urlDoc) {
         Map<Integer, Double> res = new HashMap<>();
-        Set<String> set = map.keySet();
+        Set<String> set = urlDoc.keySet();
         for (String key : set) {
-            Integer docId = urlDoc.get(key);
-            res.put(docId, map.get(key).getScore());
+            res.put(urlDoc.get(key), map.get(key).getScore());
         }
         return res;
     }

@@ -1,9 +1,12 @@
 package com.uci.indexer;
 
+import com.google.common.base.Strings;
 import com.uci.io.MyFileReader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -72,6 +75,26 @@ public class TextProcessor {
         return res;
     }
 
+    public List<String> getTokensByUrl(String url) {
+        List<String> tokens = new ArrayList<>();
+        try {
+            URL ur = new URL(url);
+            String path = ur.getPath();
+            String[] split = path.split("/");
+            if (split.length > 0) {
+                for (int i = 0; i < split.length; i++) {
+                    String trim = split[i].trim();
+                    if (!Strings.isNullOrEmpty(trim)) {
+                        tokens.add(trim);
+                    }
+                }
+            }
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+        return tokens;
+    }
+
     public List<String> stemstop(List<String> tokens) {
         List<String> res = new ArrayList<>();
         tokens = stopWordsFilter.filter(tokens);
@@ -81,4 +104,6 @@ public class TextProcessor {
         }
         return res;
     }
+
+
 }

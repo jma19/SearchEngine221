@@ -6,9 +6,12 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class Htmlparser {
@@ -128,5 +131,11 @@ public class Htmlparser {
                 .append(getheaders(doc))
                 .append("#")
                 .append(getBody(doc)).toString();
+    }
+
+    public static void main(String args[]) throws MalformedURLException {
+        URL url = new URL("http://www.costo.com/test1/test2");
+        String path = url.getPath();
+        System.out.println(path);
     }
 }
