@@ -80,15 +80,7 @@ public class TextProcessor {
         try {
             URL ur = new URL(url);
             String path = ur.getPath();
-            String[] split = path.split("/");
-            if (split.length > 0) {
-                for (int i = 0; i < split.length; i++) {
-                    String trim = split[i].trim();
-                    if (!Strings.isNullOrEmpty(trim)) {
-                        tokens.add(trim);
-                    }
-                }
-            }
+            tokens.addAll(getTokens(path));
         } catch (MalformedURLException e) {
             e.printStackTrace();
         }

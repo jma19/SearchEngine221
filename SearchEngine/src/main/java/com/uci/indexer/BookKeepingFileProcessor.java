@@ -49,6 +49,7 @@ public class BookKeepingFileProcessor {
 
     //1 - 18660
     public void process() {
+        long start = System.currentTimeMillis();
         Map<String, Integer> urlDoc = new HashMap<>();
         while (bookUrlRepository.hashNext()) {
             URLPath urlPath = bookUrlRepository.next();
@@ -62,18 +63,17 @@ public class BookKeepingFileProcessor {
                     com.uci.mode.Document document = Htmlparser.generateDocument(doc, urlPath.getUrl());
                     if (document != null) {
                         i++;
-//                        document.setId(i).setAnchorText(dbHandler.get(Table.ANCHOR, urlPath.getUrl(), String.class));
-//                        buildDocumentIndex(document);
-//                        dbHandler.put(Table.DOCUMENT, String.valueOf(i), document);
-//                        System.out.println("generate document index i = " + i);
-
+                        document.setId(i).setAnchorText(dbHandler.get(Table.ANCHOR, urlPath.getUrl(), String.class));
+                        buildDocumentIndex(document);
+                        dbHandler.put(Table.DOCUMENT, String.valueOf(i), document);
+                        System.out.println("generate document index i = " + i);
                         Map<String, String> outgoingLinks = Htmlparser.getOutgoingLinks(doc, urlPath.getUrl());
                         if (!outgoingLinks.isEmpty()) {
                             Set<String> outLinks = outgoingLinks.keySet();
                             pageRepository.addLinks(urlPath.getUrl(), Lists.newArrayList(outLinks));
                         }
                         urlDoc.put(urlPath.getUrl(), i);
-//                        System.out.println("finish add link for document i = " + i);
+                        System.out.println("finish add link for document i = " + i);
                     }
                 } catch (Exception exp) {
                     System.out.println("parsing failed: " + path);
@@ -83,23 +83,21 @@ public class BookKeepingFileProcessor {
                 }
             }
         }
-//        System.out.println("document size = " + i);
-//        dbHandler.put(Table.DOCUMENT, Constant.SIZE, i);
-//        System.out.println("saving indexing.....");
-//        indexer.calculateTFIDF();
+        System.out.println("document size = " + i);
+        dbHandler.put(Table.DOCUMENT, Constant.SIZE, i);
+        System.out.println("saving indexing.....");
+        indexer.calculateTFIDF();
 //        indexer.saveIndexesToFiles();
-//        indexer.saveIndexesToRedis();
+        indexer.saveIndexesToRedis();
+        System.out.println("saving indexing success!!!");
         System.out.println("calculating page rank.....");
         Map<String, Page> graph = pageRepository.getGraph();
-//        for(String key : graph.keySet()){
-//            List<String> inputPages = graph.get(key).getInputPages();
-//            if(inputPages != null){
-//                System.out.println(inputPages);
-//            }
-//        }
         PageRank.calculatePR(graph, ITER_NUM);
         System.out.println("saving page rank.....");
         pageRepository.savePrScores(join(graph, urlDoc));
+        System.out.println("saving page rank success!!!");
+        System.out.println("time acost ");
+
     }
 
     private Map<Integer, Double> join(Map<String, Page> map, Map<String, Integer> urlDoc) {
