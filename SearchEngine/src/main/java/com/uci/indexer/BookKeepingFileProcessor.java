@@ -45,7 +45,7 @@ public class BookKeepingFileProcessor {
 
     private String prefix = StopWordsFilter.class.getClassLoader().getResource("WEBPAGES_RAW").getPath();
 
-    private static final int ITER_NUM = 20;
+    private static final int ITER_NUM = 50;
 
     //1 - 18660
     public void process() {
@@ -94,9 +94,10 @@ public class BookKeepingFileProcessor {
         Map<String, Page> graph = pageRepository.getGraph();
         PageRank.calculatePR(graph, ITER_NUM);
         System.out.println("saving page rank.....");
-        pageRepository.savePrScores(join(graph, urlDoc));
-        System.out.println("saving page rank success!!!");
-        System.out.println("time acost ");
+        System.out.println("url doc size = " + urlDoc.size());
+//        pageRepository.savePrScores(join(graph, urlDoc));
+//        System.out.println("saving page rank success!!!");
+        System.out.println("time cost: " + ((System.currentTimeMillis() - start) / 1000));
 
     }
 

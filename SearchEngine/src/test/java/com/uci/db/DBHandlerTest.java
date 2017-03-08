@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import com.uci.ServerApplication;
 import com.uci.constant.Table;
 import com.uci.mode.IndexEntry;
+import javafx.scene.control.Tab;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +26,6 @@ public class DBHandlerTest {
 
 //    @Test
 //    public void should_clear_document_table() throws Exception {
-//        dbHandler.clearAll(Table.DOCUMENT);
 //        dbHandler.clearAll(Table.ANCHOR);
 //    }
 
@@ -42,9 +42,10 @@ public class DBHandlerTest {
         System.out.println(list1);
 
     }
-//    @Test
-//    public void should_claer_page_rank() throws Exception {
-//        dbHandler.clearAll(Table.RANK);
-//
-//    }
+    @Test
+    public void should_claer_page_rank() throws Exception {
+        dbHandler.clearAll(Table.RANK);
+        dbHandler.clearAll(Table.DOCUMENT);
+        dbHandler.clearAll(Table.TERM);
+    }
 }
