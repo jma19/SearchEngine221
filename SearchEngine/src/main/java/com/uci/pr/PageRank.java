@@ -37,6 +37,7 @@ public class PageRank {
                         score += temp.get(url) * 1.0 / graph.get(url).getOutputNumber();
                     }
                 }
+                score = 1- DampingFactor + DampingFactor * page.getScore();
                 graph.get(key).setScore(score);
             }
 
@@ -48,11 +49,11 @@ public class PageRank {
             ITERATION_STEP = ITERATION_STEP + 1;
         }
 
-        // Add the Damping Factor to PageRank
-        for (String key : pageKeys) {
-            Page page = graph.get(key);
-            page.setScore(1 - DampingFactor + DampingFactor * page.getScore());
-        }
+//        // Add the Damping Factor to PageRank
+//        for (String key : pageKeys) {
+//            Page page = graph.get(key);
+//            page.setScore(1 - DampingFactor + DampingFactor * page.getScore());
+//        }
 
         // Display PageRank
         System.out.printf("\n Final Page Rank : \n");
