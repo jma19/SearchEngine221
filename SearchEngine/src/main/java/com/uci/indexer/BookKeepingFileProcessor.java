@@ -15,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -36,16 +35,11 @@ public class BookKeepingFileProcessor {
     private DBHandler dbHandler;
 
     @Autowired
-    private AnchorTextProcessor anchorTextProcessor;
-
-    @Autowired
     private PageRepository pageRepository;
 
     private int i = 0;
 
     private String prefix = StopWordsFilter.class.getClassLoader().getResource("WEBPAGES_RAW").getPath();
-
-    private static final int ITER_NUM = 50;
 
     //1 - 18660
     public void process() {
@@ -59,13 +53,12 @@ public class BookKeepingFileProcessor {
             if (html != null && !html.isEmpty()) {
                 try {
                     Document doc = Jsoup.parse(html);
-                    anchorTextProcessor.add(doc, urlPath.getUrl());
                     com.uci.mode.Document document = Htmlparser.generateDocument(doc, urlPath.getUrl());
                     if (document != null) {
                         i++;
-                        document.setId(i).setAnchorText(dbHandler.get(Table.ANCHOR, urlPath.getUrl(), String.class));
-                        buildDocumentIndex(document);
-                        dbHandler.put(Table.DOCUMENT, String.valueOf(i), document);
+//                        document.setId(i).setAnchorText(dbHandler.get(Table.ANCHOR, urlPath.getUrl(), String.class));
+//                        buildDocumentIndex(document);
+//                        dbHandler.put(Table.DOCUMENT, String.valueOf(i), document);
                         System.out.println("generate document index i = " + i);
                         Map<String, String> outgoingLinks = Htmlparser.getOutgoingLinks(doc, urlPath.getUrl());
                         if (!outgoingLinks.isEmpty()) {
@@ -83,20 +76,20 @@ public class BookKeepingFileProcessor {
                 }
             }
         }
-        System.out.println("document size = " + i);
-        dbHandler.put(Table.DOCUMENT, Constant.SIZE, i);
-        System.out.println("saving indexing.....");
-        indexer.calculateTFIDF();
-//        indexer.saveIndexesToFiles();
-        indexer.saveIndexesToRedis();
-        System.out.println("saving indexing success!!!");
-        System.out.println("calculating page rank.....");
+//        System.out.println("document size = " + i);
+//        dbHandler.put(Table.DOCUMENT, Constant.SIZE, i);
+//        System.out.println("saving indexing.....");
+//        indexer.calculateTFIDF();
+////        indexer.saveIndexesToFiles();
+//        indexer.saveIndexesToRedis();
+//        System.out.println("saving indexing success!!!");
+//        System.out.println("calculating page rank.....");
         Map<String, Page> graph = pageRepository.getGraph();
-        PageRank.calculatePR(graph, ITER_NUM);
+        PageRank.calc(graph);
         System.out.println("saving page rank.....");
         System.out.println("url doc size = " + urlDoc.size());
-//        pageRepository.savePrScores(join(graph, urlDoc));
-//        System.out.println("saving page rank success!!!");
+        pageRepository.savePrScores(join(graph, urlDoc));
+        System.out.println("saving page rank success!!!");
         System.out.println("time cost: " + ((System.currentTimeMillis() - start) / 1000));
 
     }
