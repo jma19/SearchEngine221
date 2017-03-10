@@ -98,7 +98,12 @@ public class BookKeepingFileProcessor {
         Map<Integer, Double> res = new HashMap<>();
         Set<String> set = urlDoc.keySet();
         for (String key : set) {
-            res.put(urlDoc.get(key), map.get(key).getScore());
+            Page page = map.get(key);
+            if(page == null){
+                System.out.println("null url"+":"+key);
+                continue;
+            }
+            res.put(urlDoc.get(key), page.getScore());
         }
         return res;
     }

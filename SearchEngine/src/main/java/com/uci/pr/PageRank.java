@@ -9,7 +9,7 @@ import java.util.Set;
 
 public class PageRank {
     private static final double DampingFactor = 0.85;
-    private static final int MAX_ITERATION = 100;
+    private static final int MAX_ITERATION = 3;
 
     public static void calc(Map<String, Page> graph) {
         double initPageRank = 1.0 / graph.size();
@@ -32,7 +32,7 @@ public class PageRank {
                 Page page = graph.get(key);
                 List<String> inputPages = page.getInputPages();
                 double score = 0;
-                if(inputPages != null){
+                if (inputPages != null) {
                     for (String url : inputPages) {
                         score += temp.get(url) * 1.0 / graph.get(url).getOutputNumber();
                     }
