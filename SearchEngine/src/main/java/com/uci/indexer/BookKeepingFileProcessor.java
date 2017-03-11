@@ -1,12 +1,10 @@
 package com.uci.indexer;
 
 import com.google.common.collect.Lists;
-import com.uci.constant.Constant;
-import com.uci.constant.Table;
+import com.uci.db.DBHandler;
 import com.uci.io.MyFileReader;
 import com.uci.mode.Page;
 import com.uci.mode.URLPath;
-import com.uci.db.DBHandler;
 import com.uci.pr.PageRank;
 import com.uci.pr.PageRepository;
 import org.jsoup.Jsoup;
@@ -14,9 +12,7 @@ import org.jsoup.nodes.Document;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * parsing html file into document and generating index file
@@ -45,6 +41,7 @@ public class BookKeepingFileProcessor {
     public void process() {
         long start = System.currentTimeMillis();
         Map<String, Integer> urlDoc = new HashMap<>();
+        Set<String> urlPaths = bookUrlRepository.getURLPathsSet();
         while (bookUrlRepository.hashNext()) {
             URLPath urlPath = bookUrlRepository.next();
             String path = prefix + "/" + urlPath.getPath();
@@ -59,11 +56,11 @@ public class BookKeepingFileProcessor {
 //                        document.setId(i).setAnchorText(dbHandler.get(Table.ANCHOR, urlPath.getUrl(), String.class));
 //                        buildDocumentIndex(document);
 //                        dbHandler.put(Table.DOCUMENT, String.valueOf(i), document);
-                        System.out.println("generate document index i = " + i);
+//                        System.out.println("generate document index i = " + i);
                         Map<String, String> outgoingLinks = Htmlparser.getOutgoingLinks(doc, urlPath.getUrl());
                         if (!outgoingLinks.isEmpty()) {
                             Set<String> outLinks = outgoingLinks.keySet();
-                            pageRepository.addLinks(urlPath.getUrl(), Lists.newArrayList(outLinks));
+                            pageRepository.addLinks(urlPath.getUrl(), Lists.newArrayList(filter(urlPaths, outLinks)));
                         }
                         urlDoc.put(urlPath.getUrl(), i);
                         System.out.println("finish add link for document i = " + i);
@@ -94,13 +91,25 @@ public class BookKeepingFileProcessor {
 
     }
 
+    private List<String> filter(Set<String> urlPaths, Set<String> outLinks) {
+        List<String> res = new ArrayList<>();
+        if (outLinks != null || !outLinks.isEmpty()) {
+            for (String url : outLinks) {
+                if (urlPaths.contains(url)) {
+                    res.add(url);
+                }
+            }
+        }
+        return res;
+    }
+
     private Map<Integer, Double> join(Map<String, Page> map, Map<String, Integer> urlDoc) {
         Map<Integer, Double> res = new HashMap<>();
         Set<String> set = urlDoc.keySet();
         for (String key : set) {
             Page page = map.get(key);
-            if(page == null){
-                System.out.println("null url"+":"+key);
+            if (page == null) {
+                System.out.println("null url" + ":" + key);
                 continue;
             }
             res.put(urlDoc.get(key), page.getScore());

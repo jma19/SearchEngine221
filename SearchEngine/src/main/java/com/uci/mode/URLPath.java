@@ -35,6 +35,22 @@ public class URLPath {
     }
 
     @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        URLPath urlPath = (URLPath) o;
+
+        return url != null ? url.equals(urlPath.url) : urlPath.url == null;
+
+    }
+
+    @Override
+    public int hashCode() {
+        return url != null ? url.hashCode() : 0;
+    }
+
+    @Override
     public String toString() {
         return "URLPath{" +
                 "path='" + path + '\'' +

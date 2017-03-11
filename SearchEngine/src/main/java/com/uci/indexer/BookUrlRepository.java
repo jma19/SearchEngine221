@@ -8,8 +8,10 @@ import com.uci.utils.JsonUtils;
 import com.uci.utils.SysPathUtil;
 
 import javax.annotation.PostConstruct;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by junm5 on 2/22/17.
@@ -21,7 +23,9 @@ public class BookUrlRepository {
 
     private Iterator<URLPath> iterator;
     private int size = 0;
-    List<URLPath> urlPaths;
+    private List<URLPath> urlPaths;
+    private Set<String> urlPathSet = new HashSet<>();
+
 
     @PostConstruct
     private void loadUrls() {
@@ -34,6 +38,9 @@ public class BookUrlRepository {
             urlPaths.sort((o1, o2) -> o1.getPath().compareTo(o2.getPath()));
             size = urlPaths.size();
             iterator = urlPaths.iterator();
+            for (URLPath urlPath : urlPaths) {
+                urlPathSet.add(urlPath.getUrl());
+            }
         } finally {
             myFileReader.close();
         }
@@ -53,5 +60,9 @@ public class BookUrlRepository {
 
     public List<URLPath> getURLPaths() {
         return urlPaths;
+    }
+
+    public Set<String> getURLPathsSet() {
+        return urlPathSet;
     }
 }
