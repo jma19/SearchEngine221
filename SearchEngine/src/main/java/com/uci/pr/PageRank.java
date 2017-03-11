@@ -1,13 +1,13 @@
 package com.uci.pr;
 
-import com.google.common.collect.Lists;
 import com.uci.indexer.StopWordsFilter;
 import com.uci.io.MyFileWriter;
-import com.uci.mode.IndexEntry;
 import com.uci.mode.Page;
-import com.uci.utils.JsonUtils;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class PageRank {
     private static final double DampingFactor = 0.85;
@@ -23,7 +23,6 @@ public class PageRank {
 
         Map<String, Double> temp = new HashMap<>();
         Set<String> pageKeys = graph.keySet();
-        int k = 1; // For Traversing
         int ITERATION_STEP = 1;
 
         while (ITERATION_STEP++ <= MAX_ITERATION) // Iterations
