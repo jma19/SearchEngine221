@@ -1,3 +1,5 @@
+package com.uci.utils;
+
 import java.io.*;
 import java.util.*;
 
@@ -31,7 +33,7 @@ public class ComputeNDCG {
 		Double[] ndcg = new Double[5];
 		Double score = 5.0;
 		for(int i = 0; i < 5; i++){
-			if( i ==0) {
+			if(i ==0) {
 				ideal[i] = score;
 				dcg[i] = 0.0;
 				for(int j = 0; j < 5; j++){
