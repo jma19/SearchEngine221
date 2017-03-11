@@ -11,7 +11,7 @@ import java.util.*;
 
 public class PageRank {
     private static final double DampingFactor = 0.85;
-    private static final int MAX_ITERATION = 3;
+    private static final int MAX_ITERATION = 1000;
     private static String prefix = StopWordsFilter.class.getClassLoader().getResource("rank.txt").getPath();
 
 
@@ -54,7 +54,23 @@ public class PageRank {
             Page page = graph.get(key);
             page.setScore(1 - DampingFactor + DampingFactor * page.getScore());
         }
+        normalize(graph);
         System.out.println("calculate finish....");
+    }
+
+    private static void normalize(Map<String, Page> map) {
+        Set<String> set = map.keySet();
+        double sum = 0;
+        for (String key : set) {
+            Double score = map.get(key).getScore();
+            sum += score;
+        }
+
+        double sqrt = Math.sqrt(sum);
+        for (String key : set) {
+            Page page = map.get(key);
+            page.setScore(page.getScore() / sqrt);
+        }
     }
 
     public static void saveRankToFiles(Map<String, Page> graph) {
@@ -75,53 +91,53 @@ public class PageRank {
         }
     }
 
-    public static void main(String args[]) {
-        //http://codispatch.blogspot.com/2015/12/java-program-implement-google-page-rank-algorithm.html
-        addLinks("A", Lists.newArrayList("B"));
-        addLinks("B", Lists.newArrayList("E"));
-        addLinks("C", Lists.newArrayList("A", "B", "D", "E"));
-        addLinks("D", Lists.newArrayList("C", "E"));
-        addLinks("E", Lists.newArrayList("D"));
-
-        for (String key : map.keySet()) {
-            System.out.println(key + ":" + map.get(key));
-        }
-
-        PageRank.calc(map);
-
-    }
-
-
-    private static Map<String, Page> map = new HashMap<>();
-
-    public static void addLinks(String url, List<String> outlinks) {
-        //create source Page
-        Page source = addPage(url);
-        source.setOutputNumber(outlinks.size());
-
-        //create destination Pages
-        if (outlinks == null || outlinks.isEmpty()) {
-            return;
-        }
-        for (String outUrl : outlinks) {
-            Page page = addPage(outUrl);
-            List<String> inputPages = page.getInputPages();
-            if (inputPages == null) {
-                inputPages = new ArrayList<>();
-                page.setInputPages(inputPages);
-            }
-            inputPages.add(source.getUrl());
-        }
-    }
-
-    private static Page addPage(String url) {
-        Page page = map.get(url);
-        if (page == null) {
-            page = new Page(url);
-            map.put(url, page);
-        }
-        return page;
-    }
+//    public static void main(String args[]) {
+//        //http://codispatch.blogspot.com/2015/12/java-program-implement-google-page-rank-algorithm.html
+//        addLinks("A", Lists.newArrayList("B"));
+//        addLinks("B", Lists.newArrayList("E"));
+//        addLinks("C", Lists.newArrayList("A", "B", "D", "E"));
+//        addLinks("D", Lists.newArrayList("C", "E"));
+//        addLinks("E", Lists.newArrayList("D"));
+//
+//        for (String key : map.keySet()) {
+//            System.out.println(key + ":" + map.get(key));
+//        }
+//
+//        PageRank.calc(map);
+//
+//    }
+//
+//
+//    private static Map<String, Page> map = new HashMap<>();
+//
+//    public static void addLinks(String url, List<String> outlinks) {
+//        //create source Page
+//        Page source = addPage(url);
+//        source.setOutputNumber(outlinks.size());
+//
+//        //create destination Pages
+//        if (outlinks == null || outlinks.isEmpty()) {
+//            return;
+//        }
+//        for (String outUrl : outlinks) {
+//            Page page = addPage(outUrl);
+//            List<String> inputPages = page.getInputPages();
+//            if (inputPages == null) {
+//                inputPages = new ArrayList<>();
+//                page.setInputPages(inputPages);
+//            }
+//            inputPages.add(source.getUrl());
+//        }
+//    }
+//
+//    private static Page addPage(String url) {
+//        Page page = map.get(url);
+//        if (page == null) {
+//            page = new Page(url);
+//            map.put(url, page);
+//        }
+//        return page;
+//    }
 
 
 }
