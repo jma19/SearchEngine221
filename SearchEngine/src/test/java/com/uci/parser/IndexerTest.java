@@ -1,15 +1,11 @@
 package com.uci.parser;
 
-import com.google.common.collect.Lists;
-import com.uci.indexer.Indexer;
-import com.uci.mode.IndexEntry;
+import com.uci.indexer.OneGramIndexer;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
-
-import java.util.List;
 
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
@@ -20,10 +16,10 @@ import static org.junit.Assert.assertThat;
 
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes =  Indexer.class)
+@SpringBootTest(classes =  OneGramIndexer.class)
 public class IndexerTest {
     @Autowired
-    private Indexer indexer;
+    private OneGramIndexer indexer;
     @Test
     public void should_load_index_into_memeory() throws Exception {
 

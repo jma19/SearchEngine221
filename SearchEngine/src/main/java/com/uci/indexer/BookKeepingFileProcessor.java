@@ -1,13 +1,10 @@
 package com.uci.indexer;
 
-import com.google.common.collect.Lists;
-import com.uci.constant.Constant;
 import com.uci.constant.Table;
 import com.uci.db.DBHandler;
 import com.uci.io.MyFileReader;
 import com.uci.mode.Page;
 import com.uci.mode.URLPath;
-import com.uci.pr.PageRank;
 import com.uci.pr.PageRepository;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -26,7 +23,7 @@ public class BookKeepingFileProcessor {
     private BookUrlRepository bookUrlRepository;
 
     @Autowired
-    private Indexer indexer;
+    private OneGramIndexer indexer;
 
     @Autowired
     private DBHandler dbHandler;

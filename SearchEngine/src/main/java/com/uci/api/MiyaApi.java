@@ -1,9 +1,8 @@
 package com.uci.api;
 
-import com.uci.constant.Constant;
 import com.uci.constant.Table;
 import com.uci.db.DBHandler;
-import com.uci.indexer.Indexer;
+import com.uci.indexer.OneGramIndexer;
 import com.uci.indexer.TextProcessor;
 import com.uci.indexer.TwoGramIndexer;
 import com.uci.mode.Abstract;
@@ -30,7 +29,7 @@ public class MiyaApi {
     private TextProcessor textProcessor;
 
     @Autowired
-    private Indexer indexer;
+    private OneGramIndexer indexer;
 
     @Autowired
     private DBHandler dbHandler;

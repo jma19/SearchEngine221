@@ -30,6 +30,7 @@ public class DBHandler {
         redisCacheMap.put(TERM, new RedisCache(TERM.getName(), TERM.getName().getBytes(), template, EXPIRE_TIME));
         redisCacheMap.put(ANCHOR, new RedisCache(ANCHOR.getName(), ANCHOR.getName().getBytes(), template, EXPIRE_TIME));
         redisCacheMap.put(RANK, new RedisCache(RANK.getName(), RANK.getName().getBytes(), template, EXPIRE_TIME));
+        redisCacheMap.put(TWO_GRAM, new RedisCache(TWO_GRAM.getName(), TWO_GRAM.getName().getBytes(), template, EXPIRE_TIME));
     }
 
 

@@ -3,11 +3,10 @@ package com.uci.db;
 import com.google.common.collect.Lists;
 import com.uci.ServerApplication;
 import com.uci.constant.Table;
-import com.uci.indexer.Indexer;
+import com.uci.indexer.OneGramIndexer;
 import com.uci.indexer.Stemmer;
 import com.uci.indexer.TwoGramIndexer;
 import com.uci.mode.IndexEntry;
-import javafx.scene.control.Tab;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +30,7 @@ public class DBHandlerTest {
     private Stemmer stemmer;
 
     @Autowired
-    private Indexer indexer;
+    private OneGramIndexer indexer;
 
     @Autowired
     private TwoGramIndexer twoGramIndexer;

@@ -1,75 +1,53 @@
 package com.uci.indexer;
 
-import com.fasterxml.jackson.databind.deser.Deserializers;
-import com.google.common.base.Strings;
-import com.google.common.collect.Lists;
-import com.google.common.math.BigIntegerMath;
-import com.google.gson.reflect.TypeToken;
 import com.uci.constant.Constant;
 import com.uci.constant.Table;
 import com.uci.constant.Tag;
-import com.uci.io.MyFileReader;
-import com.uci.io.MyFileWriter;
-import com.uci.mode.IndexEntry;
+import com.uci.db.DBHandler;
 import com.uci.mode.BaseEntry;
 import com.uci.mode.Document;
-import com.uci.db.DBHandler;
-import com.uci.mode.Page;
-import javafx.scene.control.Tab;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import com.uci.mode.IndexEntry;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import com.uci.utils.JsonUtils;
-import com.uci.utils.SysPathUtil;
 
-import javax.annotation.PostConstruct;
-import java.math.BigInteger;
 import java.util.*;
 
 /**
- * Created by junm5 on 2/22/17.
+ * Created by junm5 on 3/11/17.
  */
-@Component
-public class Indexer {
-
-    @Autowired
-    private TextProcessor textProcessor;
-
-    private TreeMap<String, List<IndexEntry>> indexMap = new TreeMap<>((o1, o2) -> o1.compareTo(o2));
-    private String indexFile = StopWordsFilter.class.getClassLoader().getResource("index.txt").getPath();
-
-
+public abstract class Indexer {
+    private Table table;
     @Autowired
     private DBHandler dbHandler;
+    private int docSize;
 
-    private Integer docSize;
-
-    private Log logger = LogFactory.getLog(Indexer.class);
-
-    /**
-     * load index into memory
-     */
-    public boolean contains(String index) {
-        return dbHandler.containsKey(Table.TERM, index);
+    public void setTable(Table table) {
+        this.table = table;
     }
 
-    public List<IndexEntry> getIndexEntity(String term) {
-        List<IndexEntry> list = (List<IndexEntry>) dbHandler.get(Table.TERM, term, List.class);
-        return list;
+    TreeMap<String, List<IndexEntry>> indexMap = new TreeMap<>((o1, o2) -> o1.compareTo(o2));
+
+    public abstract void indexize(Document document);
+
+    public List<IndexEntry> getIndexEntities(String term) {
+        List<IndexEntry> termPoses = dbHandler.get(table, term, List.class);
+        return termPoses == null ? new ArrayList<>() : termPoses;
     }
 
-    public void indexize(Document document) {
-        Map<String, BaseEntry> posTitleMap = getEntryMap(Tag.TITLE, document.getTitle());
-        Map<String, BaseEntry> posAnchorMap = getEntryMap(Tag.ANCHOR, document.getAnchorText());
-        Map<String, BaseEntry> posBodyMap = getEntryMap(Tag.BODY, document.getBody());
-        Map<String, BaseEntry> posUrlMap = getEntryMap(Tag.URL, document.getUrl());
+    protected Map<String, Set<BaseEntry>> join(List<Map<String, BaseEntry>> maps) {
+        Map<String, Set<BaseEntry>> res = new HashMap<>();
+        for (Map<String, BaseEntry> map : maps) {
+            join(res, map);
+        }
+        return res;
+    }
 
-        List<Map<String, BaseEntry>> maps = Lists.newArrayList(posTitleMap, posAnchorMap, posBodyMap, posUrlMap);
-        Map<String, Set<BaseEntry>> res = join(maps);
-
+    protected void updateIndexMap(int id, List<Map<String, BaseEntry>> maps) {
+        Map<String, Set<BaseEntry>> res = new HashMap<>();
+        for (Map<String, BaseEntry> map : maps) {
+            join(res, map);
+        }
         for (String key : res.keySet()) {
-            IndexEntry termPos = new IndexEntry(document.getId());
+            IndexEntry termPos = new IndexEntry(id);
             termPos.getBaseEntries().addAll(res.get(key));
             List<IndexEntry> termPoseList = indexMap.get(key);
             if (termPoseList == null) {
@@ -80,15 +58,7 @@ public class Indexer {
         }
     }
 
-    private Map<String, Set<BaseEntry>> join(List<Map<String, BaseEntry>> maps) {
-        Map<String, Set<BaseEntry>> res = new HashMap<>();
-        for (Map<String, BaseEntry> map : maps) {
-            join(res, map);
-        }
-        return res;
-    }
-
-    private void join(Map<String, Set<BaseEntry>> map1, Map<String, BaseEntry> map2) {
+    protected void join(Map<String, Set<BaseEntry>> map1, Map<String, BaseEntry> map2) {
         if (map2.isEmpty()) {
             return;
         }
@@ -102,44 +72,7 @@ public class Indexer {
         }
     }
 
-    private Map<String, BaseEntry> getEntryMap(Tag tag, String text) {
-        if (Strings.isNullOrEmpty(text)) {
-            return new HashMap<>();
-        }
-        List<String> tokens;
-        if (tag == Tag.TWOGRAM_TITLE || tag == Tag.TWOGRAM_BODY) {
-            tokens = getNGrams(text, 2);
-        } else {
-            tokens = getTokens(tag, text);
-        }
-        return buildPosMap(tag, tokens);
-    }
-
-    private List<String> getTokens(Tag tag, String contxt) {
-        List<String> tokens = (tag == Tag.URL) ? textProcessor.getTokensByUrl(contxt)
-                : textProcessor.getTokens(contxt);
-        return textProcessor.stemstop(tokens);
-    }
-
-    public List<String> getNGrams(String contxt, int n) {
-        List<String> tokens = textProcessor.getTokens(contxt);
-        tokens = textProcessor.stemstop(tokens);
-        return getNGrams(tokens, n);
-    }
-
-    public List<String> getNGrams(List<String> tokens, int n) {
-        List<String> res = new ArrayList();
-        for (int i = n - 1; i < tokens.size(); i++) {
-            StringBuffer temp = new StringBuffer();
-            for (int j = i - n + 1; j <= i; j++) {
-                temp.append(tokens.get(j));
-            }
-            res.add(temp.toString());
-        }
-        return res;
-    }
-
-    private Map<String, BaseEntry> buildPosMap(Tag tag, List<String> tokens) {
+    protected Map<String, BaseEntry> buildPosMap(Tag tag, List<String> tokens) {
         Map<String, BaseEntry> map = new HashMap<>();
         if (tokens == null || tokens.isEmpty()) {
             return map;
@@ -156,28 +89,38 @@ public class Indexer {
         return map;
     }
 
+
     public void saveIndexesToRedis() {
-        System.out.println("index number: " + indexMap.size());
         for (String key : indexMap.keySet()) {
             System.out.println("storing term: " + key);
-            dbHandler.put(Table.TERM, key, indexMap.get(key));
+            dbHandler.put(table, key, indexMap.get(key));
         }
-        indexMap.clear();
+        System.out.println("index number: " + indexMap.size());
         System.out.println("save indexes to redis success!!!");
+        indexMap.clear();
     }
 
-
-    /**
-     * @param term
-     * @return
-     */
-    public List<IndexEntry> getIndexEntities(String term) {
-        List<IndexEntry> termPoses = dbHandler.get(Table.TERM, term, List.class);
-        return termPoses == null ? new ArrayList<>() : termPoses;
+    public double getIDF(String term) {
+        if (docSize == 0) {
+            docSize = dbHandler.get(Table.DOCUMENT, Constant.SIZE, Integer.class);
+        }
+        List<IndexEntry> indexEntries = (List<IndexEntry>) dbHandler.get(table, term, List.class);
+        if (indexEntries == null || indexEntries.isEmpty()) {
+            System.out.println("return empty list !!!");
+            return 0;
+        }
+        return Math.log10((double) docSize / indexEntries.size());
     }
+
+    public boolean contains(String index) {
+        return dbHandler.containsKey(table, index);
+    }
+
 
     public void calculateTFIDF() {
-        docSize = dbHandler.get(Table.DOCUMENT, Constant.SIZE, Integer.class);
+        if (docSize == 0) {
+            docSize = dbHandler.get(Table.DOCUMENT, Constant.SIZE, Integer.class);
+        }
         Set<String> keySet = indexMap.keySet();
         for (String key : keySet) {
             List<IndexEntry> indexEntries = indexMap.get(key);
@@ -190,38 +133,5 @@ public class Indexer {
         }
     }
 
-    public double getIDF(String term) {
-        if (docSize == null) {
-            docSize = dbHandler.get(Table.DOCUMENT, Constant.SIZE, Integer.class);
-            logger.info(String.format("document size = %d", docSize));
-        }
-        List<IndexEntry> indexEntries = (List<IndexEntry>) dbHandler.get(Table.TERM, term, List.class);
-        if (indexEntries == null || indexEntries.isEmpty()) {
-            logger.info(String.format("term=%s is empty", term));
-            return 0;
-        }
-        return Math.log10((double) docSize / indexEntries.size());
-    }
-
-
-    public void saveIndexesToFiles() {
-        System.out.println("index number: " + indexMap.size());
-        MyFileWriter.createFile(indexFile);
-        MyFileWriter myFileWriter = null;
-        try {
-            myFileWriter = new MyFileWriter(indexFile, true);
-            for (String key : indexMap.keySet()) {
-                List<IndexEntry> termPoses = indexMap.get(key);
-                String text = new StringBuffer().append(key).append(":").append(JsonUtils.toJson(termPoses)).toString();
-                myFileWriter.writeLine(text);
-                myFileWriter.flush();
-                System.out.println("storing term : " + key);
-            }
-            myFileWriter.flush();
-
-        } finally {
-            myFileWriter.close();
-        }
-    }
 
 }
