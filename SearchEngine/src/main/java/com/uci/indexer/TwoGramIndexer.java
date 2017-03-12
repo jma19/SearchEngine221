@@ -45,19 +45,8 @@ public class TwoGramIndexer extends Indexer {
         if (Strings.isNullOrEmpty(text)) {
             return new HashMap<>();
         }
-        List<String> tokens;
-        if (tag == Tag.TWOGRAM_TITLE || tag == Tag.TWOGRAM_BODY) {
-            tokens = getNGrams(text, 2);
-        } else {
-            tokens = getTokens(tag, text);
-        }
+        List<String> tokens = getNGrams(text, 2);
         return buildPosMap(tag, tokens);
-    }
-
-    private List<String> getTokens(Tag tag, String contxt) {
-        List<String> tokens = (tag == Tag.URL) ? textProcessor.getTokensByUrl(contxt)
-                : textProcessor.getTokens(contxt);
-        return textProcessor.stemstop(tokens);
     }
 
     public List<String> getNGrams(String contxt, int n) {
