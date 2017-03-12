@@ -32,7 +32,7 @@ public class BaseEntry {
     }
 
     public int getTermFre() {
-        return pos.size();
+        return termFre != 0 ? termFre : pos.size();
     }
 
     public List<Integer> getPos() {

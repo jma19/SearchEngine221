@@ -84,7 +84,7 @@ public abstract class Indexer {
                 baseEntry = new BaseEntry().setTag(tag);
                 map.put(key, baseEntry);
             }
-            baseEntry.getPos().add(i);
+            baseEntry.setTermFre(baseEntry.getTermFre() + 1);
         }
         return map;
     }

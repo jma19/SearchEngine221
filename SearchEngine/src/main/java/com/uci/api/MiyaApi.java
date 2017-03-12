@@ -18,10 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @RestController
@@ -62,7 +59,8 @@ public class MiyaApi {
             return queryTwoGrams(tokens);
         }
         List<String> queryList = textProcessor.stemstop(tokens);
-        List<String> queryFin = queryList.stream().filter(query1 -> oneGramIndexer.contains(query1)).collect(Collectors.toList());
+        List<String> queryFin = queryList.stream().filter(query1 ->
+                oneGramIndexer.contains(query1)).collect(Collectors.toList());
 
         if (queryFin.size() == 1) {
             return queryOneWord(queryFin.get(0));
@@ -83,13 +81,14 @@ public class MiyaApi {
         }
         List<IndexEntry> indexEntities = twoGramIndexer.getIndexEntities(stringBuffer.toString());
         // order by term frequency desc
-        List<IndexEntry> tempRes = indexEntities.stream()
-                .sorted((o1, o2) -> o2.getTermFre() - o1.getTermFre())
-                .limit(10).collect(Collectors.toList());
+//        List<IndexEntry> tempRes = indexEntities.stream()
+//                .sorted((o1, o2) -> o2.getTermFre() - o1.getTermFre())
+//                .collect(Collectors.toList());
 
-        return getAbstractsByIndexEntry(tempRes);
+        List<Abstract> abstracts = removeDuplicate(getAbstractsByIndexEntry(indexEntities));
+        return abstracts.stream().sorted().collect(Collectors.toList());
+
     }
-
 
     public List<Abstract> queryOneWord(String term) {
         List<IndexEntry> indexEntities = oneGramIndexer.getIndexEntities(term);
@@ -109,9 +108,13 @@ public class MiyaApi {
         for (IndexEntry indexEntry : indexEntries) {
             int docId = indexEntry.getId();
             Document doc = dbHandler.get(Table.DOCUMENT, String.valueOf(docId), Document.class);
-            res.add(new Abstract().setDesc(doc.getBody().substring(0, 200))
+
+            String body = doc.getBody().length() > 200 ?
+                    doc.getBody().substring(0, 200) : doc.getBody();
+            res.add(new Abstract().setDesc(body)
                     .setUrl(doc.getUrl())
-                    .setTitle(doc.getTitle()));
+                    .setTitle(doc.getTitle())
+                    .setScore(indexEntry.getTermFre()));
         }
         return res;
     }
@@ -140,20 +143,15 @@ public class MiyaApi {
         List<Pair> list = new ArrayList<>();
         for (Integer docId : docMap.keySet()) {
             double[] docV = docMap.get(docId);
-            double sumTFIDF = 0;
-            for (int i = 0; i < docV.length; i++) {
-                sumTFIDF += docV[i];
-            }
-            sumTFIDF += pageRepository.getPrScore(docId);
             normalize(docV);
-            double dot = dot(query, docV);
-            list.add(new Pair(docId, dot, sumTFIDF));
+            double dot = dot(query, docV) + pageRepository.getPrScore(docId);
+            list.add(new Pair(docId, dot));
         }
         List<Pair> pairs = list.stream()
                 .sorted().limit(50).collect(Collectors.toList());
-        for (Pair pair : pairs) {
-            System.out.println(pair);
-        }
+//        for (Pair pair : pairs) {
+//            System.out.println(pair);
+//        }
         return getAbstractsByPairs(pairs);
     }
 
@@ -200,4 +198,22 @@ public class MiyaApi {
             vector[i] /= sum;
         }
     }
+
+    private List<Abstract> removeDuplicate(List<Abstract> abstracts) {
+        HashMap<Integer, Abstract> map = new HashMap<>();
+        for (Abstract abs : abstracts) {
+            int hashcode = abs.hashCode();
+            Abstract old = map.get(hashcode);
+            if (map.containsKey(hashcode)) {
+                if (abs.getUrl().length() < old.getUrl().length()) {
+                    map.put(hashcode, abs);
+                }
+            } else {
+                map.put(hashcode, abs);
+            }
+        }
+        Collection<Abstract> values = map.values();
+        return Lists.newArrayList(values);
+    }
+
 }
