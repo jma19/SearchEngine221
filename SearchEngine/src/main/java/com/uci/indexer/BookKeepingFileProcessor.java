@@ -1,6 +1,8 @@
 package com.uci.indexer;
 
 import com.google.common.collect.Lists;
+import com.uci.constant.Constant;
+import com.uci.constant.Table;
 import com.uci.db.DBHandler;
 import com.uci.io.MyFileReader;
 import com.uci.mode.Page;
@@ -13,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
-
 /**
  * parsing html file into document and generating index file
  * Created by junm5 on 2/25/17.
@@ -32,6 +33,9 @@ public class BookKeepingFileProcessor {
 
     @Autowired
     private PageRepository pageRepository;
+
+    @Autowired
+    private TwoGramIndexer twoGramIndexer;
 
     private int i = 0;
 
@@ -53,16 +57,16 @@ public class BookKeepingFileProcessor {
                     com.uci.mode.Document document = Htmlparser.generateDocument(doc, urlPath.getUrl());
                     if (document != null) {
                         i++;
-//                        document.setId(i).setAnchorText(dbHandler.get(Table.ANCHOR, urlPath.getUrl(), String.class));
-//                        buildDocumentIndex(document);
+                        document.setId(i).setAnchorText(dbHandler.get(Table.ANCHOR, urlPath.getUrl(), String.class));
+                        twoGramIndexer.indexize(document);
 //                        dbHandler.put(Table.DOCUMENT, String.valueOf(i), document);
-//                        System.out.println("generate document index i = " + i);
-                        Map<String, String> outgoingLinks = Htmlparser.getOutgoingLinks(doc, urlPath.getUrl());
-                        if (!outgoingLinks.isEmpty()) {
-                            Set<String> outLinks = outgoingLinks.keySet();
-                            pageRepository.addLinks(urlPath.getUrl(), Lists.newArrayList(filter(urlPaths, outLinks)));
-                        }
-                        urlDoc.put(urlPath.getUrl(), i);
+                        System.out.println("generate document index i = " + i);
+//                        Map<String, String> outgoingLinks = Htmlparser.getOutgoingLinks(doc, urlPath.getUrl());
+//                        if (!outgoingLinks.isEmpty()) {
+//                            Set<String> outLinks = outgoingLinks.keySet();
+//                            pageRepository.addLinks(urlPath.getUrl(), Lists.newArrayList(filter(urlPaths, outLinks)));
+//                        }
+//                        urlDoc.put(urlPath.getUrl(), i);
                         System.out.println("finish add link for document i = " + i);
                     }
                 } catch (Exception exp) {
@@ -76,17 +80,17 @@ public class BookKeepingFileProcessor {
 //        System.out.println("document size = " + i);
 //        dbHandler.put(Table.DOCUMENT, Constant.SIZE, i);
 //        System.out.println("saving indexing.....");
-//        indexer.calculateTFIDF();
-////        indexer.saveIndexesToFiles();
-//        indexer.saveIndexesToRedis();
-//        System.out.println("saving indexing success!!!");
+        twoGramIndexer.calculateTFIDF();
+//        indexer.saveIndexesToFiles();
+        twoGramIndexer.saveIndexesToRedis();
+        System.out.println("saving indexing success!!!");
 //        System.out.println("calculating page rank.....");
-        Map<String, Page> graph = pageRepository.getGraph();
-        PageRank.calc(graph);
-        System.out.println("saving page rank.....");
-        System.out.println("url doc size = " + urlDoc.size());
-        pageRepository.savePrScores(join(graph, urlDoc));
-        System.out.println("saving page rank success!!!");
+//        Map<String, Page> graph = pageRepository.getGraph();
+//        PageRank.calc(graph);
+//        System.out.println("saving page rank.....");
+//        System.out.println("url doc size = " + urlDoc.size());
+//        pageRepository.savePrScores(join(graph, urlDoc));
+//        System.out.println("saving page rank success!!!");
         System.out.println("time cost: " + ((System.currentTimeMillis() - start) / 1000));
 
     }
@@ -115,9 +119,5 @@ public class BookKeepingFileProcessor {
             res.put(urlDoc.get(key), page.getScore());
         }
         return res;
-    }
-
-    private void buildDocumentIndex(com.uci.mode.Document document) {
-        indexer.indexize(document);
     }
 }

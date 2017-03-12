@@ -1,5 +1,7 @@
 package com.uci.indexer;
 
+import org.junit.Test;
+
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -14,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 
 public class Term {
+
 	public Term(String name){
 		this.name = name;
 		this.indexEntryMap = new HashMap<Integer, IndexEntry>();

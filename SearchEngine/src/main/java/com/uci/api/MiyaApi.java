@@ -5,6 +5,7 @@ import com.uci.constant.Table;
 import com.uci.db.DBHandler;
 import com.uci.indexer.Indexer;
 import com.uci.indexer.TextProcessor;
+import com.uci.indexer.TwoGramIndexer;
 import com.uci.mode.Abstract;
 import com.uci.mode.Document;
 import com.uci.mode.IndexEntry;
@@ -37,28 +38,15 @@ public class MiyaApi {
     @Autowired
     private PageRepository pageRepository;
 
+    @Autowired
+    private TwoGramIndexer twoGramIndexer;
+
     @RequestMapping(path = "/query/{query}", method = RequestMethod.GET)
     public List<Abstract> query(@PathVariable String query) {
         System.out.println("receiving :" + query);
         List<Abstract> abstractList = getAbstractList(query);
         return abstractList;
     }
-
-//    private List<Abstract> buildAbstractsTest() {
-//        List<Abstract> abstracts = Lists.newArrayList();
-//        abstracts.add(new Abstract().setUrl("https://www.ics.uci.edu/faculty/area/").setTitle("ICS Research Areas").setDesc("Curiosity about the world and a commitment to solving problems are the passions that drive ICS faculty. Their research in the information and computer sciences are applicable to many scholarly and scientific fields. But our faculty don't do it alone, students work side-by-side with nationally renowned professors to advance knowledge and improve lives. Below is a"));
-//        abstracts.add(new Abstract().setUrl("https://www.ics.uci.edu/faculty/area/").setTitle("ICS Research Areas").setDesc("Curiosity about the world and a commitment to solving problems are the passions that drive ICS faculty. Their research in the information and computer sciences are applicable to many scholarly and scientific fields. But our faculty don't do it alone, students work side-by-side with nationally renowned professors to advance knowledge and improve lives. Below is a"));
-//        abstracts.add(new Abstract().setUrl("https://www.ics.uci.edu/faculty/area/").setTitle("ICS Research Areas").setDesc("Curiosity about the world and a commitment to solving problems are the passions that drive ICS faculty. Their research in the information and computer sciences are applicable to many scholarly and scientific fields. But our faculty don't do it alone, students work side-by-side with nationally renowned professors to advance knowledge and improve lives. Below is a"));
-//        abstracts.add(new Abstract().setUrl("https://www.ics.uci.edu/faculty/area/").setTitle("ICS Research Areas").setDesc("Curiosity about the world and a commitment to solving problems are the passions that drive ICS faculty. Their research in the information and computer sciences are applicable to many scholarly and scientific fields. But our faculty don't do it alone, students work side-by-side with nationally renowned professors to advance knowledge and improve lives. Below is a"));
-//        abstracts.add(new Abstract().setUrl("https://www.ics.uci.edu/faculty/area/").setTitle("ICS Research Areas").setDesc("Curiosity about the world and a commitment to solving problems are the passions that drive ICS faculty. Their research in the information and computer sciences are applicable to many scholarly and scientific fields. But our faculty don't do it alone, students work side-by-side with nationally renowned professors to advance knowledge and improve lives. Below is a"));
-//        abstracts.add(new Abstract().setUrl("https://www.ics.uci.edu/faculty/area/").setTitle("ICS Research Areas").setDesc("Curiosity about the world and a commitment to solving problems are the passions that drive ICS faculty. Their research in the information and computer sciences are applicable to many scholarly and scientific fields. But our faculty don't do it alone, students work side-by-side with nationally renowned professors to advance knowledge and improve lives. Below is a"));
-//        abstracts.add(new Abstract().setUrl("https://www.ics.uci.edu/faculty/area/").setTitle("ICS Research Areas").setDesc("Curiosity about the world and a commitment to solving problems are the passions that drive ICS faculty. Their research in the information and computer sciences are applicable to many scholarly and scientific fields. But our faculty don't do it alone, students work side-by-side with nationally renowned professors to advance knowledge and improve lives. Below is a"));
-//        abstracts.add(new Abstract().setUrl("https://www.ics.uci.edu/faculty/area/").setTitle("ICS Research Areas").setDesc("Curiosity about the world and a commitment to solving problems are the passions that drive ICS faculty. Their research in the information and computer sciences are applicable to many scholarly and scientific fields. But our faculty don't do it alone, students work side-by-side with nationally renowned professors to advance knowledge and improve lives. Below is a"));
-//        abstracts.add(new Abstract().setUrl("https://www.ics.uci.edu/faculty/area/").setTitle("ICS Research Areas").setDesc("Curiosity about the world and a commitment to solving problems are the passions that drive ICS faculty. Their research in the information and computer sciences are applicable to many scholarly and scientific fields. But our faculty don't do it alone, students work side-by-side with nationally renowned professors to advance knowledge and improve lives. Below is a"));
-//        abstracts.add(new Abstract().setUrl("https://www.ics.uci.edu/faculty/area/").setTitle("ICS Research Areas").setDesc("Curiosity about the world and a commitment to solving problems are the passions that drive ICS faculty. Their research in the information and computer sciences are applicable to many scholarly and scientific fields. But our faculty don't do it alone, students work side-by-side with nationally renowned professors to advance knowledge and improve lives. Below is a"));
-//        return abstracts;
-//
-//    }
 
     public List<Abstract> getAbstractList(String query) {
         if (query == null || query.isEmpty()) {
@@ -67,6 +55,8 @@ public class MiyaApi {
         List<String> tokens = textProcessor.getTokens(query);
         List<String> queryList = textProcessor.stemstop(tokens);
         List<String> queryFin = queryList.stream().filter(query1 -> indexer.contains(query1)).collect(Collectors.toList());
+
+        queryList.addAll(twoGramIndexer.getNGrams(queryList, 2));
 
         if (queryFin.size() == 1) {
             return queryOneWord(queryFin.get(0));
@@ -85,7 +75,7 @@ public class MiyaApi {
         // order by term frequency desc
         List<IndexEntry> tempRes = indexEntities.stream()
                 .sorted((o1, o2) -> o2.getTermFre() - o1.getTermFre())
-                .limit(10).collect(Collectors.toList());
+                .limit(50).collect(Collectors.toList());
 
         return getAbstractsByIndexEntry(tempRes);
     }
@@ -126,12 +116,20 @@ public class MiyaApi {
         List<Pair> list = new ArrayList<>();
         for (Integer docId : docMap.keySet()) {
             double[] docV = docMap.get(docId);
+            double sumTFIDF = 0;
+            for (int i = 0; i < docV.length; i++) {
+                sumTFIDF += docV[i];
+            }
+            sumTFIDF += pageRepository.getPrScore(docId);
             normalize(docV);
-            double dot = Constant.alpha * dot(query, docV) + (1 - Constant.alpha) * pageRepository.getPrScore(docId) ;
-            list.add(new Pair(docId, dot));
+            double dot = dot(query, docV);
+            list.add(new Pair(docId, dot, sumTFIDF));
         }
         List<Pair> pairs = list.stream()
-                        .sorted().limit(10).collect(Collectors.toList());
+                .sorted().limit(50).collect(Collectors.toList());
+        for (Pair pair : pairs) {
+            System.out.println(pair);
+        }
         return getAbstractsByPairs(pairs);
     }
 
@@ -158,6 +156,14 @@ public class MiyaApi {
             sum += v1[i] * v2[i];
         }
         return sum;
+    }
+
+    private double getNormalFactor(double[] vector) {
+        double sum = 0;
+        for (int i = 0; i < vector.length; i++) {
+            sum += Math.pow(vector[i], 2);
+        }
+        return Math.sqrt(sum);
     }
 
     private void normalize(double[] vector) {

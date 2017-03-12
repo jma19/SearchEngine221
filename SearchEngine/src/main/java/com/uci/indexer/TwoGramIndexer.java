@@ -1,37 +1,28 @@
 package com.uci.indexer;
 
-import com.fasterxml.jackson.databind.deser.Deserializers;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
-import com.google.common.math.BigIntegerMath;
-import com.google.gson.reflect.TypeToken;
 import com.uci.constant.Constant;
 import com.uci.constant.Table;
 import com.uci.constant.Tag;
-import com.uci.io.MyFileReader;
+import com.uci.db.DBHandler;
 import com.uci.io.MyFileWriter;
-import com.uci.mode.IndexEntry;
 import com.uci.mode.BaseEntry;
 import com.uci.mode.Document;
-import com.uci.db.DBHandler;
-import com.uci.mode.Page;
-import javafx.scene.control.Tab;
+import com.uci.mode.IndexEntry;
+import com.uci.utils.JsonUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import com.uci.utils.JsonUtils;
-import com.uci.utils.SysPathUtil;
 
-import javax.annotation.PostConstruct;
-import java.math.BigInteger;
 import java.util.*;
 
 /**
  * Created by junm5 on 2/22/17.
  */
 @Component
-public class Indexer {
+public class TwoGramIndexer {
 
     @Autowired
     private TextProcessor textProcessor;
@@ -45,7 +36,7 @@ public class Indexer {
 
     private Integer docSize;
 
-    private Log logger = LogFactory.getLog(Indexer.class);
+    private Log logger = LogFactory.getLog(TwoGramIndexer.class);
 
     /**
      * load index into memory
@@ -60,12 +51,10 @@ public class Indexer {
     }
 
     public void indexize(Document document) {
-        Map<String, BaseEntry> posTitleMap = getEntryMap(Tag.TITLE, document.getTitle());
-        Map<String, BaseEntry> posAnchorMap = getEntryMap(Tag.ANCHOR, document.getAnchorText());
-        Map<String, BaseEntry> posBodyMap = getEntryMap(Tag.BODY, document.getBody());
-        Map<String, BaseEntry> posUrlMap = getEntryMap(Tag.URL, document.getUrl());
+        Map<String, BaseEntry> posTitleTwoGramMap = getEntryMap(Tag.TWOGRAM_TITLE, document.getTitle());
+        Map<String, BaseEntry> posBodyTwoGramMap = getEntryMap(Tag.TWOGRAM_BODY, document.getBody());
 
-        List<Map<String, BaseEntry>> maps = Lists.newArrayList(posTitleMap, posAnchorMap, posBodyMap, posUrlMap);
+        List<Map<String, BaseEntry>> maps = Lists.newArrayList(posTitleTwoGramMap, posBodyTwoGramMap);
         Map<String, Set<BaseEntry>> res = join(maps);
 
         for (String key : res.keySet()) {
@@ -157,12 +146,12 @@ public class Indexer {
     }
 
     public void saveIndexesToRedis() {
-        System.out.println("index number: " + indexMap.size());
         for (String key : indexMap.keySet()) {
             System.out.println("storing term: " + key);
             dbHandler.put(Table.TERM, key, indexMap.get(key));
         }
         indexMap.clear();
+        System.out.println("index number: " + indexMap.size());
         System.out.println("save indexes to redis success!!!");
     }
 

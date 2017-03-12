@@ -17,7 +17,11 @@ public class HtmlparserTest {
 //        String res=m_html.replaceAll(""); //过滤html标签
 //        System.out.println(res);
 
-        Document documnet = Htmlparser.loadDocument("https://eee.uci.edu/");
-        System.out.println(documnet);
+//        Document documnet = Htmlparser.loadDocument("https://eee.uci.edu/");
+//        System.out.println(documnet);
+
+        double a = (double) 2 / 3;
+        System.out.println(a);
+
     }
 }

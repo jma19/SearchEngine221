@@ -5,6 +5,6 @@ package com.uci.constant;
  */
 public interface Constant {
     String SIZE = "SIZE";
-    double alpha = 0.6;
+    double alpha = 0.7;
 }
 

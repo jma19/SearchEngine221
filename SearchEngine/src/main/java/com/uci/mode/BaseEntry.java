@@ -21,9 +21,11 @@ public class BaseEntry {
     public Tag getTag() {
         return tag;
     }
-    public BaseEntry(){
+
+    public BaseEntry() {
         pos = new ArrayList<>();
     }
+
     public BaseEntry setTag(Tag name) {
         this.tag = name;
         return this;

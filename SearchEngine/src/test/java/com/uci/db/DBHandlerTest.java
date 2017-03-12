@@ -3,6 +3,9 @@ package com.uci.db;
 import com.google.common.collect.Lists;
 import com.uci.ServerApplication;
 import com.uci.constant.Table;
+import com.uci.indexer.Indexer;
+import com.uci.indexer.Stemmer;
+import com.uci.indexer.TwoGramIndexer;
 import com.uci.mode.IndexEntry;
 import javafx.scene.control.Tab;
 import org.junit.Test;
@@ -24,6 +27,14 @@ public class DBHandlerTest {
     @Autowired
     private DBHandler dbHandler;
 
+    @Autowired
+    private Stemmer stemmer;
+
+    @Autowired
+    private Indexer indexer;
+
+    @Autowired
+    private TwoGramIndexer twoGramIndexer;
 //    @Test
 //    public void should_clear_document_table() throws Exception {
 //        dbHandler.clearAll(Table.ANCHOR);
@@ -47,5 +58,15 @@ public class DBHandlerTest {
         dbHandler.clearAll(Table.RANK);
         dbHandler.clearAll(Table.DOCUMENT);
         dbHandler.clearAll(Table.TERM);
+    }
+
+    @Test
+    public void should_get_() throws Exception{
+        String computer = stemmer.stem("computer");
+        String games = stemmer.stem("games");
+        List<String> nGrams = twoGramIndexer.getNGrams(Lists.newArrayList(computer, games), 2);
+        System.out.println(nGrams);
+        List<IndexEntry> indexEntities = indexer.getIndexEntities(nGrams.get(0));
+        System.out.println(indexEntities);
     }
 }
