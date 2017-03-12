@@ -18,6 +18,7 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Created by junm5 on 2/22/17.
@@ -32,6 +33,8 @@ public class TwoGramIndexer extends Indexer {
 
     @Autowired
     private TextProcessor textProcessor;
+    @Autowired
+    private Stemmer stemmer;
 
     public void indexize(Document document) {
         Map<String, BaseEntry> posTitleTwoGramMap = getEntryMap(Tag.TWOGRAM_TITLE, document.getTitle());
@@ -51,7 +54,7 @@ public class TwoGramIndexer extends Indexer {
 
     public List<String> getNGrams(String contxt, int n) {
         List<String> tokens = textProcessor.getTokens(contxt);
-        tokens = textProcessor.stemstop(tokens);
+        tokens = tokens.stream().map(token -> stemmer.stem(token)).collect(Collectors.toList());
         return getNGrams(tokens, n);
     }
 

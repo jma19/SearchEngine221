@@ -1,8 +1,10 @@
 package com.uci.api;
 
+import com.google.common.collect.Lists;
 import com.uci.constant.Table;
 import com.uci.db.DBHandler;
 import com.uci.indexer.OneGramIndexer;
+import com.uci.indexer.Stemmer;
 import com.uci.indexer.TextProcessor;
 import com.uci.indexer.TwoGramIndexer;
 import com.uci.mode.Abstract;
@@ -29,7 +31,7 @@ public class MiyaApi {
     private TextProcessor textProcessor;
 
     @Autowired
-    private OneGramIndexer indexer;
+    private OneGramIndexer oneGramIndexer;
 
     @Autowired
     private DBHandler dbHandler;
@@ -39,6 +41,9 @@ public class MiyaApi {
 
     @Autowired
     private TwoGramIndexer twoGramIndexer;
+
+    @Autowired
+    private Stemmer stemmer;
 
     @RequestMapping(path = "/query/{query}", method = RequestMethod.GET)
     public List<Abstract> query(@PathVariable String query) {
@@ -52,29 +57,49 @@ public class MiyaApi {
             return new ArrayList<>();
         }
         List<String> tokens = textProcessor.getTokens(query);
-        List<String> queryList = textProcessor.stemstop(tokens);
-        List<String> queryFin = queryList.stream().filter(query1 -> indexer.contains(query1)).collect(Collectors.toList());
 
-        queryList.addAll(twoGramIndexer.getNGrams(queryList, 2));
+        if (tokens.size() == 2) {
+            return queryTwoGrams(tokens);
+        }
+        List<String> queryList = textProcessor.stemstop(tokens);
+        List<String> queryFin = queryList.stream().filter(query1 -> oneGramIndexer.contains(query1)).collect(Collectors.toList());
 
         if (queryFin.size() == 1) {
             return queryOneWord(queryFin.get(0));
-
         } else if (queryFin.size() >= 2) {
             return queryMultiWords(queryFin);
         }
         return new ArrayList<>();
     }
 
+    //get two gram result
+    public List<Abstract> queryTwoGrams(List<String> tokens) {
+        if (tokens.size() != 2) {
+            return Lists.newArrayList();
+        }
+        StringBuffer stringBuffer = new StringBuffer();
+        for (int i = 0; i < tokens.size(); i++) {
+            stringBuffer.append(stemmer.stem(tokens.get(i)));
+        }
+        List<IndexEntry> indexEntities = twoGramIndexer.getIndexEntities(stringBuffer.toString());
+        // order by term frequency desc
+        List<IndexEntry> tempRes = indexEntities.stream()
+                .sorted((o1, o2) -> o2.getTermFre() - o1.getTermFre())
+                .limit(10).collect(Collectors.toList());
+
+        return getAbstractsByIndexEntry(tempRes);
+    }
+
+
     public List<Abstract> queryOneWord(String term) {
-        List<IndexEntry> indexEntities = indexer.getIndexEntities(term);
+        List<IndexEntry> indexEntities = oneGramIndexer.getIndexEntities(term);
         if (indexEntities == null || indexEntities.isEmpty()) {
             return new ArrayList<>();
         }
         // order by term frequency desc
         List<IndexEntry> tempRes = indexEntities.stream()
                 .sorted((o1, o2) -> o2.getTermFre() - o1.getTermFre())
-                .limit(50).collect(Collectors.toList());
+                .limit(10).collect(Collectors.toList());
 
         return getAbstractsByIndexEntry(tempRes);
     }
@@ -98,8 +123,8 @@ public class MiyaApi {
         Map<Integer, double[]> docMap = new HashMap<>();
         int index = 0;
         for (String key : freMap.keySet()) {
-            query[index] = indexer.getIDF(key) * (1 + Math.log10(freMap.get(key)));
-            List<IndexEntry> indexEntities = indexer.getIndexEntities(key);
+            query[index] = oneGramIndexer.getIDF(key) * (1 + Math.log10(freMap.get(key)));
+            List<IndexEntry> indexEntities = oneGramIndexer.getIndexEntities(key);
             for (IndexEntry entry : indexEntities) {
                 double[] temp = docMap.get(entry.getId());
                 if (temp == null) {
@@ -174,23 +199,5 @@ public class MiyaApi {
         for (int i = 0; i < vector.length; i++) {
             vector[i] /= sum;
         }
-    }
-
-    private final int HALF_LEN_OF_ABSTRACT = 25 / 2;
-
-    private String generateAbstract(List<String> tokens, int pos) {
-        int start = pos - HALF_LEN_OF_ABSTRACT, end = pos + HALF_LEN_OF_ABSTRACT;
-        if (start < 0) {
-            start = 0;
-        }
-        if (end >= tokens.size()) {
-            end = tokens.size() - 1;
-        }
-        StringBuffer stringBuffer = new StringBuffer();
-        for (int k = start; k <= end; k++) {
-            stringBuffer.append(tokens.get(k));
-        }
-        stringBuffer.append("........");
-        return stringBuffer.toString();
     }
 }

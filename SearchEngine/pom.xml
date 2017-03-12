@@ -63,6 +63,18 @@
             <artifactId>jsoup</artifactId>
             <version>1.10.2</version>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/com.google.api.client/google-api-client -->
+        <dependency>
+            <groupId>com.google.api.client</groupId>
+            <artifactId>google-api-client</artifactId>
+            <version>1.4.0-alpha</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/com.google.apis/google-api-services-customsearch -->
+        <dependency>
+            <groupId>com.google.apis</groupId>
+            <artifactId>google-api-services-customsearch</artifactId>
+            <version>v1-rev53-1.22.0</version>
+        </dependency>
 
         <!--<dependency>-->
         <!--<groupId>org.springframework.boot</groupId>-->

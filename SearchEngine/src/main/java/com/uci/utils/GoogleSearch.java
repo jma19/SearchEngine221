@@ -1,3 +1,5 @@
+package com.uci.utils;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -8,11 +10,9 @@ import com.google.api.services.customsearch.Customsearch;
 import com.google.api.services.customsearch.model.Result;
 import com.google.api.services.customsearch.model.Search;
 
-public class Google {
+public class GoogleSearch {
 
- 
     public static List<String> GoogleSearch(String query) {
-
         Customsearch customsearch = new Customsearch(new NetHttpTransport(), new JacksonFactory(), null);
         String q = query;
         List<String> tmp = null;
@@ -28,22 +28,16 @@ public class Google {
             for (Result res : items) {
                 tmp.add(res.getLink());
             }
-          
-
         } catch (IOException e) {
-          
             e.printStackTrace();
-        
+
         }
-
-
         return tmp;
     }
-
-    public static void main(String[] args){
+    public static void main(String[] args) {
         String a = "computer games";
         List<String> b = GoogleSearch(a);
-        for(String s: b){
+        for (String s : b) {
             System.out.println(s);
         }
     }
