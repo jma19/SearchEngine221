@@ -38,6 +38,9 @@ public class MiyaApi {
 
     @Autowired
     private Stemmer stemmer;
+    
+    @Autowired
+    private BookUrlRepository bul;
 
     @RequestMapping(path = "/query/{query}", method = RequestMethod.GET)
     public List<Abstract> query(@PathVariable String query) {
@@ -154,5 +157,32 @@ public class MiyaApi {
         Collection<Abstract> values = map.values();
         return Lists.newArrayList(values);
     }
+    public List<String> transform(List<Abstract> list){
+        return list.stream().map(anAbstract -> anAbstract.getUrl())
+                .collect(Collectors.toList());
+    }
+    public static List<String> deletehttp(List<String> s){
+        List<String> res = new ArrayList<String>();
+        for(String ss: s){
+            res.add(ss.replaceAll("https://", "http://"));
+        }
+        return res;
+    }
+    public void MeaNDCG (String query){
+        List<Abstract> abs = getAbstractList(query);
+        List<String> local = transform(abs);
+        List<String> ideal_tmp = GoogleSearch.GenerateList(query);
+        //List<String> local = deletehttp(local_tmp);
+        List<String> ideal = deletehttp(ideal_tmp);
+        Set<String> tomatch = bul.getURLPathsSet();
+        for(String s : ideal){
+            if(!tomatch.contains(s)){
+                ideal.remove(s);
+            }
+        }
+        ComputeNDCG c = new ComputeNDCG();
+        c.NDCG(local,ideal);
+    }
+
 
 }
