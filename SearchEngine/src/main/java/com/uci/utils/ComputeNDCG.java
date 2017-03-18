@@ -24,10 +24,13 @@ public class ComputeNDCG {
 	return oURLs;
 }
 
-	public void NDCG(String us, String google){
-		List<String> gURLs = readFile(google);
+	
+	public void NDCG(List<String> us, List<String> google){
+		List<String> gURLs = google;
+		List<String> oURLs = us;
+		//List<String> gURLs = readFile(google);
 		//System.out.println(gURLs);
-		List<String> oURLs = readFile(us);
+		//List<String> oURLs = readFile(us);
 		Double[] ideal = new Double[5];
 		Double[] dcg = new Double[5];
 		Double[] ndcg = new Double[5];
@@ -66,10 +69,10 @@ public class ComputeNDCG {
 
 
 	}
-	public static void main(String[] args){
-		ComputeNDCG c = new ComputeNDCG();
-		String i = "ideal.txt";
-		String j = "local.txt";
-		c.NDCG(i,j);
-	}
+	//public static void main(String[] args){
+	//	ComputeNDCG c = new ComputeNDCG();
+	//	String i = "ideal.txt";
+	//	String j = "local.txt";
+	//	c.NDCG(i,j);
+	//}
 }
