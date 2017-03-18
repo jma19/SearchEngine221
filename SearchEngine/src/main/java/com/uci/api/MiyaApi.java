@@ -1,6 +1,7 @@
 package com.uci.api;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import com.uci.constant.Table;
 import com.uci.db.DBHandler;
 import com.uci.indexer.OneGramIndexer;
@@ -11,7 +12,6 @@ import com.uci.mode.Abstract;
 import com.uci.mode.Document;
 import com.uci.mode.IndexEntry;
 import com.uci.mode.Pair;
-import com.uci.pr.PageRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.*;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 @RestController
@@ -33,9 +32,6 @@ public class MiyaApi {
 
     @Autowired
     private DBHandler dbHandler;
-
-    @Autowired
-    private PageRepository pageRepository;
 
     @Autowired
     private TwoGramIndexer twoGramIndexer;
@@ -55,38 +51,29 @@ public class MiyaApi {
             return new ArrayList<>();
         }
         List<String> tokens = textProcessor.getTokens(query);
-        List<Abstract> res = new ArrayList<>();
-        if (tokens.size() == 2) {
-            res = queryTwoGrams(tokens);
-        }
-        if (!res.isEmpty()) {
-            return res;
-        }
         List<String> queryList = textProcessor.stemstop(tokens);
-        List<String> queryFin = queryList.stream().filter(query1 ->
-                oneGramIndexer.contains(query1)).collect(Collectors.toList());
+        Set<String> queryFin = queryList.stream().filter(query1 -> oneGramIndexer.contains(query1)).collect(Collectors.toSet());
 
         if (queryFin.size() == 1) {
-            res.addAll(queryOneWord(queryFin.get(0)));
+            return queryOneWord(Lists.newArrayList(queryFin).get(0));
         } else if (queryFin.size() >= 2) {
-            res.addAll(queryMultiWords(queryFin));
+            return queryMultiWords(queryTwoGrams(tokens), Sets.newHashSet(queryFin));
         }
-        return res;
+        return new ArrayList<>();
     }
 
     //get two gram result
-    public List<Abstract> queryTwoGrams(List<String> tokens) {
-        if (tokens.size() != 2) {
+    public List<IndexEntry> queryTwoGrams(List<String> tokens) {
+        if (tokens.size() < 2) {
             return Lists.newArrayList();
         }
-        StringBuffer stringBuffer = new StringBuffer();
-        for (int i = 0; i < tokens.size(); i++) {
-            stringBuffer.append(stemmer.stem(tokens.get(i)));
+        List<IndexEntry> res = Lists.newArrayList();
+        for (int i = 1; i < tokens.size(); i++) {
+            StringBuffer stringBuffer = new StringBuffer();
+            stringBuffer.append(stemmer.stem(tokens.get(i - 1))).append(stemmer.stem(tokens.get(i)));
+            res.addAll(twoGramIndexer.getIndexEntities(stringBuffer.toString()));
         }
-        List<IndexEntry> indexEntities = twoGramIndexer.getIndexEntities(stringBuffer.toString());
-        List<Abstract> abstracts = removeDuplicate(getAbstractsByIndexEntry(indexEntities));
-        return abstracts.stream().sorted().collect(Collectors.toList());
-
+        return res;
     }
 
     public List<Abstract> queryOneWord(String term) {
@@ -114,38 +101,26 @@ public class MiyaApi {
         return res;
     }
 
-    public List<Abstract> queryMultiWords(List<String> terms) {
-        Map<String, Integer> freMap = textProcessor.buildFreMap(terms);
-        int size = freMap.size();
-        double[] query = new double[size];
-        Map<Integer, double[]> docMap = new HashMap<>();
-        int index = 0;
-        for (String key : freMap.keySet()) {
-            query[index] = oneGramIndexer.getIDF(key) * (1 + Math.log10(freMap.get(key)));
+    public List<Abstract> queryMultiWords(List<IndexEntry> list, Set<String> terms) {
+        //key is the docId, value is the tf-idf scores
+        Map<Integer, Double> scoreMap = new HashMap<>();
+        for (IndexEntry indexEntry : list) {
+            scoreMap.put(indexEntry.getId(), scoreMap.getOrDefault(indexEntry.getId(), 0.) + indexEntry.getTfIdf());
+        }
+
+        for (String key : terms) {
             List<IndexEntry> indexEntities = oneGramIndexer.getIndexEntities(key);
             for (IndexEntry entry : indexEntities) {
-                double[] temp = docMap.get(entry.getId());
-                if (temp == null) {
-                    temp = new double[size];
-                    docMap.put(entry.getId(), temp);
-                }
-                temp[index] = entry.getTfIdf();
+                scoreMap.put(entry.getId(), scoreMap.getOrDefault(entry.getId(), 0.) + entry.getTfIdf());
             }
-            index++;
         }
-        normalize(query);
-        //store final sim value for each document
-        List<Pair> list = new ArrayList<>();
-        for (Integer docId : docMap.keySet()) {
-            double[] docV = docMap.get(docId);
-            normalize(docV);
-            double dot = dot(query, docV) + pageRepository.getPrScore(docId);
-            list.add(new Pair(docId, dot));
+        List<Pair> res = Lists.newArrayList();
+        for (Integer docId : scoreMap.keySet()) {
+            res.add(new Pair(docId, scoreMap.get(docId)));
         }
-        List<Pair> pairs = list.stream()
-                .sorted().limit(50).collect(Collectors.toList());
-        List<Abstract> abstracts = removeDuplicate(getAbstractsByPairs(pairs));
-        return abstracts.stream().sorted().collect(Collectors.toList());
+        List<Abstract> abstractsByPairs = getAbstractsByPairs(res);
+        List<Abstract> abstracts = removeDuplicate(abstractsByPairs);
+        return abstracts.stream().sorted().limit(20).collect(Collectors.toList());
     }
 
     private List<Abstract> getAbstractsByPairs(List<Pair> pairs) {
@@ -161,36 +136,6 @@ public class MiyaApi {
                     .setScore(pair.getScore()));
         }
         return res;
-    }
-
-    private double dot(double[] v1, double[] v2) {
-        if (v1.length != v2.length) {
-            throw new ArithmeticException("v1.length is not equal to v2.length");
-        }
-        double sum = 0;
-        for (int i = 0; i < v1.length; i++) {
-            sum += v1[i] * v2[i];
-        }
-        return sum;
-    }
-
-    private double getNormalFactor(double[] vector) {
-        double sum = 0;
-        for (int i = 0; i < vector.length; i++) {
-            sum += Math.pow(vector[i], 2);
-        }
-        return Math.sqrt(sum);
-    }
-
-    private void normalize(double[] vector) {
-        double sum = 0;
-        for (int i = 0; i < vector.length; i++) {
-            sum += Math.pow(vector[i], 2);
-        }
-        sum = Math.sqrt(sum);
-        for (int i = 0; i < vector.length; i++) {
-            vector[i] /= sum;
-        }
     }
 
     private List<Abstract> removeDuplicate(List<Abstract> abstracts) {
