@@ -38,9 +38,10 @@ public class TwoGramIndexer extends Indexer {
 
     public void indexize(Document document) {
         Map<String, BaseEntry> posTitleTwoGramMap = getEntryMap(Tag.TWOGRAM_TITLE, document.getTitle());
+        Map<String, BaseEntry> anchorTwoGramMap = getEntryMap(Tag.TWOGRAM_ANCHOR, document.getAnchorText());
         Map<String, BaseEntry> posBodyTwoGramMap = getEntryMap(Tag.TWOGRAM_BODY, document.getBody());
 
-        List<Map<String, BaseEntry>> maps = Lists.newArrayList(posTitleTwoGramMap, posBodyTwoGramMap);
+        List<Map<String, BaseEntry>> maps = Lists.newArrayList(posTitleTwoGramMap, anchorTwoGramMap, posBodyTwoGramMap);
         updateIndexMap(document.getId(), maps);
     }
 

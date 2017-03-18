@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.*;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 @RestController
@@ -54,20 +55,23 @@ public class MiyaApi {
             return new ArrayList<>();
         }
         List<String> tokens = textProcessor.getTokens(query);
-
+        List<Abstract> res = new ArrayList<>();
         if (tokens.size() == 2) {
-            return queryTwoGrams(tokens);
+            res = queryTwoGrams(tokens);
+        }
+        if (!res.isEmpty()) {
+            return res;
         }
         List<String> queryList = textProcessor.stemstop(tokens);
         List<String> queryFin = queryList.stream().filter(query1 ->
                 oneGramIndexer.contains(query1)).collect(Collectors.toList());
 
         if (queryFin.size() == 1) {
-            return queryOneWord(queryFin.get(0));
+            res.addAll(queryOneWord(queryFin.get(0)));
         } else if (queryFin.size() >= 2) {
-            return queryMultiWords(queryFin);
+            res.addAll(queryMultiWords(queryFin));
         }
-        return new ArrayList<>();
+        return res;
     }
 
     //get two gram result
@@ -80,11 +84,6 @@ public class MiyaApi {
             stringBuffer.append(stemmer.stem(tokens.get(i)));
         }
         List<IndexEntry> indexEntities = twoGramIndexer.getIndexEntities(stringBuffer.toString());
-        // order by term frequency desc
-//        List<IndexEntry> tempRes = indexEntities.stream()
-//                .sorted((o1, o2) -> o2.getTermFre() - o1.getTermFre())
-//                .collect(Collectors.toList());
-
         List<Abstract> abstracts = removeDuplicate(getAbstractsByIndexEntry(indexEntities));
         return abstracts.stream().sorted().collect(Collectors.toList());
 
@@ -95,12 +94,8 @@ public class MiyaApi {
         if (indexEntities == null || indexEntities.isEmpty()) {
             return new ArrayList<>();
         }
-        // order by term frequency desc
-        List<IndexEntry> tempRes = indexEntities.stream()
-                .sorted((o1, o2) -> o2.getTermFre() - o1.getTermFre())
-                .limit(10).collect(Collectors.toList());
-
-        return getAbstractsByIndexEntry(tempRes);
+        List<Abstract> abstracts = removeDuplicate(getAbstractsByIndexEntry(indexEntities));
+        return abstracts.stream().sorted().limit(10).collect(Collectors.toList());
     }
 
     public List<Abstract> getAbstractsByIndexEntry(List<IndexEntry> indexEntries) {
@@ -149,10 +144,8 @@ public class MiyaApi {
         }
         List<Pair> pairs = list.stream()
                 .sorted().limit(50).collect(Collectors.toList());
-//        for (Pair pair : pairs) {
-//            System.out.println(pair);
-//        }
-        return getAbstractsByPairs(pairs);
+        List<Abstract> abstracts = removeDuplicate(getAbstractsByPairs(pairs));
+        return abstracts.stream().sorted().collect(Collectors.toList());
     }
 
     private List<Abstract> getAbstractsByPairs(List<Pair> pairs) {
@@ -164,7 +157,8 @@ public class MiyaApi {
             res.add(new Abstract()
                     .setDesc(body)
                     .setTitle(document.getTitle())
-                    .setUrl(document.getUrl()));
+                    .setUrl(document.getUrl())
+                    .setScore(pair.getScore()));
         }
         return res;
     }
