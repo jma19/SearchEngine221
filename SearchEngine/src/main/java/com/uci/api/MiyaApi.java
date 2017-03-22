@@ -11,7 +11,6 @@ import com.uci.mode.IndexEntry;
 import com.uci.mode.Pair;
 import com.uci.utils.ComputeNDCG;
 import com.uci.utils.GoogleSearch;
-import com.uci.utils.MyTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,8 +23,6 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/miya")
 public class MiyaApi {
-    @Autowired
-    private MyTest test;
 
     @Autowired
     private TextProcessor textProcessor;
@@ -63,9 +60,7 @@ public class MiyaApi {
         if (queryFin.size() == 1) {
             return queryOneWord(Lists.newArrayList(queryFin).get(0));
         } else if (queryFin.size() >= 2) {
-            List<Abstract> abstracts = test.buildAbstract(query);
-            abstracts.addAll(queryMultiWords(queryTwoGrams(tokens), Sets.newHashSet(queryFin)));
-            return abstracts;
+            return queryMultiWords(queryTwoGrams(tokens), Sets.newHashSet(queryFin));
         }
         return new ArrayList<>();
     }
