@@ -7,6 +7,7 @@ import com.uci.indexer.OneGramIndexer;
 import com.uci.indexer.Stemmer;
 import com.uci.indexer.TwoGramIndexer;
 import com.uci.mode.IndexEntry;
+import javafx.scene.control.Tab;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,10 +35,6 @@ public class DBHandlerTest {
 
     @Autowired
     private TwoGramIndexer twoGramIndexer;
-//    @Test
-//    public void should_clear_document_table() throws Exception {
-//        dbHandler.clearAll(Table.ANCHOR);
-//    }
 
     @Test
     public void should_store_list_() throws Exception {
@@ -54,9 +51,10 @@ public class DBHandlerTest {
     }
     @Test
     public void should_claer_page_rank() throws Exception {
-        dbHandler.clearAll(Table.RANK);
-        dbHandler.clearAll(Table.DOCUMENT);
-        dbHandler.clearAll(Table.TERM);
+//        dbHandler.clearAll(Table.RANK);
+//        dbHandler.clearAll(Table.DOCUMENT);
+//        dbHandler.clearAll(Table.TERM);
+//        dbHandler.clearAll(Table.TWO_GRAM);
     }
 
     @Test

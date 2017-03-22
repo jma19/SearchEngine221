@@ -11,6 +11,7 @@ import com.uci.mode.IndexEntry;
 import com.uci.mode.Pair;
 import com.uci.utils.ComputeNDCG;
 import com.uci.utils.GoogleSearch;
+import com.uci.utils.MyTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,11 +21,12 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.uci.utils.Test.buildAbstract;
-
 @RestController
 @RequestMapping("/miya")
 public class MiyaApi {
+    @Autowired
+    private MyTest test;
+
     @Autowired
     private TextProcessor textProcessor;
 
@@ -61,7 +63,7 @@ public class MiyaApi {
         if (queryFin.size() == 1) {
             return queryOneWord(Lists.newArrayList(queryFin).get(0));
         } else if (queryFin.size() >= 2) {
-            List<Abstract> abstracts = buildAbstract(query);
+            List<Abstract> abstracts = test.buildAbstract(query);
             abstracts.addAll(queryMultiWords(queryTwoGrams(tokens), Sets.newHashSet(queryFin)));
             return abstracts;
         }
@@ -126,7 +128,7 @@ public class MiyaApi {
         }
         List<Abstract> abstractsByPairs = getAbstractsByPairs(res);
         List<Abstract> abstracts = removeDuplicate(abstractsByPairs);
-        return abstracts.stream().sorted().collect(Collectors.toList());
+        return abstracts.stream().sorted().limit(15).collect(Collectors.toList());
     }
 
     private List<Abstract> getAbstractsByPairs(List<Pair> pairs) {

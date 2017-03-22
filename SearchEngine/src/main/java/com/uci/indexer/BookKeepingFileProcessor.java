@@ -1,5 +1,6 @@
 package com.uci.indexer;
 
+import com.uci.constant.Constant;
 import com.uci.constant.Table;
 import com.uci.db.DBHandler;
 import com.uci.io.MyFileReader;
@@ -12,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+
 /**
  * parsing html file into document and generating index file
  * Created by junm5 on 2/25/17.
@@ -30,9 +32,11 @@ public class BookKeepingFileProcessor {
 
     @Autowired
     private PageRepository pageRepository;
-
+    //
     @Autowired
     private TwoGramIndexer twoGramIndexer;
+//    @Autowired
+//    private OneGramIndexer oneGramIndexer;
 
     private int i = 0;
 
@@ -76,9 +80,8 @@ public class BookKeepingFileProcessor {
         }
 //        System.out.println("document size = " + i);
 //        dbHandler.put(Table.DOCUMENT, Constant.SIZE, i);
-//        System.out.println("saving indexing.....");
+        System.out.println("saving indexing.....");
         twoGramIndexer.calculateTFIDF();
-//        indexer.saveIndexesToFiles();
         twoGramIndexer.saveIndexesToRedis();
         System.out.println("saving indexing success!!!");
 //        System.out.println("calculating page rank.....");
