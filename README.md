@@ -1,5 +1,5 @@
 # Goal
-Implement a complete search engine for the ICS domain(ics.uci.edu). At the end of this project, you should have a [web] interface that provides the user with a text box to enter queries and returns relevant results
+Implement a complete search engine from scratch  for the ICS domain(ics.uci.edu). Provide [web] interface for user to enter queries and returns relevant results
 
 # Used Techniques including
 1. Java 
